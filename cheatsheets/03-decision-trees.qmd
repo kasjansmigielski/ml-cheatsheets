@@ -21,6 +21,9 @@ Wyobraź sobie lekarza, który diagnozuje chorobę: "Czy ma gorączkę? TAK → 
 Czy klient weźmie kredyt na podstawie jego profilu?
 
 ```{python}
+#| echo: true
+#| output: false
+
 import pandas as pd
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
@@ -90,6 +93,18 @@ print(data.describe())
 print(f"\nOdsetek przyznanych kredytów: {data['kredyt_przyznany'].mean():.1%}")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż statystyki i odsetki przyznanych kredytów
+
+```{python}
+#| echo: false
+
+print("Statystyki klientów:")
+print(data.describe())
+print(f"\nOdsetek przyznanych kredytów: {data['kredyt_przyznany'].mean():.1%}")
+```
+:::
+
 ---
 
 ## 🔧 Budowanie modelu krok po kroku
@@ -97,6 +112,9 @@ print(f"\nOdsetek przyznanych kredytów: {data['kredyt_przyznany'].mean():.1%}")
 ### 1) Przygotowanie danych
 
 ```{python}
+#| echo: true
+#| output: false
+
 # Encoding kategorycznych zmiennych
 from sklearn.preprocessing import LabelEncoder
 
@@ -119,9 +137,23 @@ print(f"Dane treningowe: {len(X_train)} klientów")
 print(f"Dane testowe: {len(X_test)} klientów")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż wyniki dane treningowe i testowe
+
+```{python}
+#| echo: false
+
+print(f"Dane treningowe: {len(X_train)} klientów")
+print(f"Dane testowe: {len(X_test)} klientów")
+```
+:::
+
 ### 2) Trenowanie Decision Tree
 
 ```{python}
+#| echo: true
+#| output: false
+
 # Tworzenie modelu z ograniczeniami (żeby nie był za głęboki)
 dt_model = DecisionTreeClassifier(
     max_depth=5,        # maksymalna głębokość drzewa
@@ -138,9 +170,24 @@ print(f"Głębokość drzewa: {dt_model.tree_.max_depth}")
 print(f"Liczba liści: {dt_model.tree_.n_leaves}")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż parametry wytrenowanego modelu
+
+```{python}
+#| echo: false
+
+print("Model wytrenowany!")
+print(f"Głębokość drzewa: {dt_model.tree_.max_depth}")
+print(f"Liczba liści: {dt_model.tree_.n_leaves}")
+```
+:::
+
 ### 3) Ewaluacja modelu
 
 ```{python}
+#| echo: true
+#| output: false
+
 # Predykcje
 y_pred = dt_model.predict(X_test)
 y_pred_proba = dt_model.predict_proba(X_test)[:, 1]
@@ -161,22 +208,34 @@ print(f"Rzeczywiste Nie: {cm[0,0]:3d}   {cm[0,1]:3d}")
 print(f"Rzeczywiste Tak: {cm[1,0]:3d}   {cm[1,1]:3d}")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż wyniki
+
+```{python}
+#| echo: false
+
+cm = confusion_matrix(y_test, y_pred)
+print("\nConfusion Matrix:")
+print("Przewidywane:    Nie    Tak")
+print(f"Rzeczywiste Nie: {cm[0,0]:3d}   {cm[0,1]:3d}")
+print(f"Rzeczywiste Tak: {cm[1,0]:3d}   {cm[1,1]:3d}")
+```
+:::
+
 ---
 
 ## 🎨 Wizualizacja drzewa decyzyjnego
 
 ```{python}
-#| label: fig-decision-tree
-#| fig-cap: "Wizualizacja drzewa decyzyjnego dla kredytów"
-#| fig-width: 20
-#| fig-height: 10
-#| warning: false
+#| echo: true
+#| output: false
 
 import pandas as pd
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn import tree
 import matplotlib.pyplot as plt
 
@@ -229,39 +288,110 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 dt_model = DecisionTreeClassifier(max_depth=5, min_samples_split=50, min_samples_leaf=20, random_state=42)
 dt_model.fit(X_train, y_train)
 
-# Wizualizacja drzewa (uproszczona)
-plt.figure(figsize=(20, 10))
-
-# Nazwy features dla lepszej czytelności
-feature_names = ['wiek', 'dochód', 'historia_kred.', 'zatrudnienie', 'oszczędności', 'liczba_dzieci']
-
-tree.plot_tree(dt_model, 
-               feature_names=feature_names,
-               class_names=['Nie', 'Tak'],
-               filled=True,
-               rounded=True,
-               fontsize=10)
-
-plt.title("Drzewo decyzyjne - Przyznanie kredytu")
-plt.show()
+# Ewaluacja
+y_pred = dt_model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+cm = confusion_matrix(y_test, y_pred)
 
 # Ważność features
+feature_names = ['wiek', 'dochód', 'historia_kred.', 'zatrudnienie', 'oszczędności', 'liczba_dzieci']
 importance = dt_model.feature_importances_
 feature_importance = pd.DataFrame({
     'feature': feature_names,
     'importance': importance
 }).sort_values('importance', ascending=False)
 
+# Przygotuj wykres drzewa
+plt.figure(figsize=(20, 10))
+tree.plot_tree(dt_model, 
+               feature_names=feature_names,
+               class_names=['Nie', 'Tak'],
+               filled=True,
+               rounded=True,
+               fontsize=10)
+plt.title("Drzewo decyzyjne - Przyznanie kredytu")
+plt.close()
+
+print(f"Wyniki modelu Decision Tree:")
+print(f"Głębokość drzewa: {dt_model.tree_.max_depth}")
+print(f"Liczba liści: {dt_model.tree_.n_leaves}")
+print(f"Dokładność modelu: {accuracy:.1%}")
+
+print(f"\nStatystyki danych:")
+print(f"Dane treningowe: {len(X_train)} klientów")
+print(f"Dane testowe: {len(X_test)} klientów")
+print(f"Odsetek przyznanych kredytów: {data['kredyt_przyznany'].mean():.1%}")
+
+print("\nConfusion Matrix:")
+print("Przewidywane:    Nie    Tak")
+print(f"Rzeczywiste Nie: {cm[0,0]:3d}   {cm[0,1]:3d}")
+print(f"Rzeczywiste Tak: {cm[1,0]:3d}   {cm[1,1]:3d}")
+
 print("\nWażność cech:")
 for _, row in feature_importance.iterrows():
     print(f"{row['feature']}: {row['importance']:.3f}")
+
+# Odtwórz wykres drzewa
+plt.figure(figsize=(20, 10))
+tree.plot_tree(dt_model, 
+               feature_names=feature_names,
+               class_names=['Nie', 'Tak'],
+               filled=True,
+               rounded=True,
+               fontsize=10)
+plt.title("Drzewo decyzyjne - Przyznanie kredytu")
+plt.show()
 ```
+
+::: {.callout-note collapse="true"}
+## Pokaż wyniki i drzewo decyzyjne
+
+```{python}
+#| echo: false
+#| fig-cap: "Wizualizacja drzewa decyzyjnego dla kredytów"
+#| fig-width: 20
+#| fig-height: 10
+
+print(f"Wyniki modelu Decision Tree:")
+print(f"Głębokość drzewa: {dt_model.tree_.max_depth}")
+print(f"Liczba liści: {dt_model.tree_.n_leaves}")
+print(f"Dokładność modelu: {accuracy:.1%}")
+
+print(f"\nStatystyki danych:")
+print(f"Dane treningowe: {len(X_train)} klientów")
+print(f"Dane testowe: {len(X_test)} klientów")
+print(f"Odsetek przyznanych kredytów: {data['kredyt_przyznany'].mean():.1%}")
+
+print("\nConfusion Matrix:")
+print("Przewidywane:    Nie    Tak")
+print(f"Rzeczywiste Nie: {cm[0,0]:3d}   {cm[0,1]:3d}")
+print(f"Rzeczywiste Tak: {cm[1,0]:3d}   {cm[1,1]:3d}")
+
+print("\nWażność cech:")
+for _, row in feature_importance.iterrows():
+    print(f"{row['feature']}: {row['importance']:.3f}")
+
+# Odtwórz wykres drzewa
+plt.figure(figsize=(20, 10))
+tree.plot_tree(dt_model, 
+               feature_names=feature_names,
+               class_names=['Nie', 'Tak'],
+               filled=True,
+               rounded=True,
+               fontsize=10)
+plt.title("Drzewo decyzyjne - Przyznanie kredytu")
+plt.show()
+```
+:::
 
 ---
 
 ## 🔍 Interpretacja decyzji dla konkretnego klienta
 
 ```{python}
+#| echo: true
+#| output: false
+
 # Funkcja do interpretacji ścieżki decyzyjnej
 def explain_decision(model, X_sample, feature_names):
     # Pobierz ścieżkę w drzewie
@@ -298,6 +428,21 @@ print(f"Prawdopodobieństwo: {probability[1]:.1%}")
 
 explain_decision(dt_model, sample_client.values, feature_names)
 ```
+
+::: {.callout-note collapse="true"}
+## Pokaż dane klienta testowego
+
+```{python}
+#| echo: false
+
+print(f"Klient testowy:")
+print(f"Wiek: {sample_client['wiek']}")
+print(f"Dochód: {sample_client['dochod']:.0f}")
+print(f"Oszczędności: {sample_client['oszczednosci']:.0f}")
+print(f"\nDecyzja: {'KREDYT PRZYZNANY' if prediction else 'KREDYT ODRZUCONY'}")
+print(f"Prawdopodobieństwo: {probability[1]:.1%}")
+```
+:::
 
 ---
 
@@ -338,6 +483,9 @@ hr_tree = DecisionTreeClassifier(max_depth=5)
 ## ⚙️ Tuning parametrów
 
 ```{python}
+#| echo: true
+#| output: false
+
 from sklearn.model_selection import GridSearchCV
 
 # Najważniejsze parametry do tuningu
@@ -369,12 +517,32 @@ best_accuracy = accuracy_score(y_test, best_model.predict(X_test))
 print(f"Dokładność na test set: {best_accuracy:.1%}")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż najlepsze parametry
+
+```{python}
+#| echo: false
+
+print("Najlepsze parametry:")
+print(grid_search.best_params_)
+print(f"Najlepsza dokładność CV: {grid_search.best_score_:.1%}")
+
+# Model z najlepszymi parametrami
+best_model = grid_search.best_estimator_
+best_accuracy = accuracy_score(y_test, best_model.predict(X_test))
+print(f"Dokładność na test set: {best_accuracy:.1%}")
+```
+:::
+
 ---
 
 ## ⚠️ Problemy i rozwiązania
 
 ### 1) **Overfitting - drzewo za głębokie**
 ```{python}
+#| echo: true
+#| output: false
+
 # Problem: drzewo "pamięta" dane treningowe
 overfitted_tree = DecisionTreeClassifier()  # bez ograniczeń!
 overfitted_tree.fit(X_train, y_train)
@@ -400,8 +568,29 @@ print(f"Test accuracy: {test_acc_pruned:.1%}")
 print(f"Różnica: {train_acc_pruned - test_acc_pruned:.1%} - znacznie lepiej!")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż wyniki
+
+```{python}
+#| echo: false
+
+print(f"Overfitted model:")
+print(f"Train accuracy: {train_acc:.1%}")
+print(f"Test accuracy: {test_acc:.1%}")
+print(f"Różnica: {train_acc - test_acc:.1%} - to overfitting!")
+
+print(f"\nPruned model:")
+print(f"Train accuracy: {train_acc_pruned:.1%}")
+print(f"Test accuracy: {test_acc_pruned:.1%}")
+print(f"Różnica: {train_acc_pruned - test_acc_pruned:.1%} - znacznie lepiej!")
+```
+:::
+
 ### 2) **Brak stabilności - małe zmiany = różne drzewa**
 ```{python}
+#| echo: true
+#| output: false
+
 # Problem demonstracji
 results = []
 for i in range(10):
@@ -415,6 +604,18 @@ print(f"Dokładność różnych drzew: {min(results):.1%} - {max(results):.1%}")
 print(f"Rozrzut: {max(results) - min(results):.1%}")
 print("Rozwiązanie: Random Forest (następna ściągawka!)")
 ```
+
+::: {.callout-note collapse="true"}
+## Pokaż wyniki
+
+```{python}
+#| echo: false
+
+print(f"Dokładność różnych drzew: {min(results):.1%} - {max(results):.1%}")
+print(f"Rozrzut: {max(results) - min(results):.1%}")
+print("Rozwiązanie: Random Forest (następna ściągawka!)")
+```
+:::
 
 ---
 
@@ -430,6 +631,7 @@ print("Rozwiązanie: Random Forest (następna ściągawka!)")
 ## 💡 Kiedy używać Decision Trees?
 
 **✅ UŻYJ GDY:**
+
 - Potrzebujesz interpretowalnego modelu
 - Dane mają kategoryczne zmienne  
 - Chcesz zrozumieć "dlaczego" model podjął decyzję
@@ -437,10 +639,11 @@ print("Rozwiązanie: Random Forest (następna ściągawka!)")
 - Braków w danych nie trzeba impute'ować
 
 **❌ NIE UŻYWAJ GDY:**
+
 - Potrzebujesz najwyższej dokładności (użyj Random Forest/XGBoost)
 - Masz bardzo głębokie wzorce w danych (użyj Neural Networks)
 - Dane są bardzo hałaśliwe
 - Przewidujesz wartości ciągłe (lepiej Linear Regression)
 :::
 
-**Następna ściągawka:** Random Forest - zespół drzew! 🌲🌲🌲
+**Następna ściągawka:** Random Forest - zespół drzew (wkrótce)! 🌲🌲🌲

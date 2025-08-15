@@ -22,8 +22,8 @@ Zamiast pisać kod "jeśli temperatura > 25°C, to będzie słonecznie", **ML po
 **Mamy dane + znamy prawidłowe odpowiedzi**
 
 ```{python}
-#| label: supervised-example
-#| warning: false
+#| echo: true
+#| output: false
 
 # Przykład: predykcja ceny domu
 # Dane wejściowe: powierzchnia, lokalizacja, rok budowy
@@ -39,9 +39,6 @@ data = pd.DataFrame({
     'cena': [300000, 400000, 550000, 650000, 800000]  # znamy prawdziwe ceny!
 })
 
-print("Dane treningowe:")
-print(data)
-
 # Trenowanie modelu
 model = LinearRegression()
 X = data[['powierzchnia', 'rok_budowy']]
@@ -51,11 +48,32 @@ model.fit(X, y)
 # Predykcja dla nowego domu
 nowy_dom = [[90, 2005]]
 przewidywana_cena = model.predict(nowy_dom)
+
+# Zapisz wyniki do zmiennych dla expandera
+dane_treningowe = data.to_string()
+wynik_predykcji = f"Przewidywana cena: {przewidywana_cena[0]:.0f} zł"
+
+print("Dane treningowe:")
+print(dane_treningowe)
 print(f"\nPredykcja dla domu 90m², rok 2005:")
-print(f"Przewidywana cena: {przewidywana_cena[0]:.0f} zł")
+print(wynik_predykcji)
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż wyniki predykcji cen
+
+```{python}
+#| echo: false
+
+print("Dane treningowe:")
+print(dane_treningowe)
+print(f"\nPredykcja dla domu 90m², rok 2005:")
+print(wynik_predykcji)
+```
+:::
+
 **Real-world zastosowania:**
+
 - Predykcja cen akcji/nieruchomości
 - Diagnoza medyczna (klasyfikacja chorób)
 - Filtrowanie spamu w emailach
@@ -67,8 +85,8 @@ print(f"Przewidywana cena: {przewidywana_cena[0]:.0f} zł")
 **Mamy tylko dane, szukamy ukrytych wzorców**
 
 ```{python}
-#| label: unsupervised-example
-#| warning: false
+#| echo: true
+#| output: false
 
 # Przykład: segmentacja klientów sklepu
 from sklearn.cluster import KMeans
@@ -82,23 +100,45 @@ klienci = pd.DataFrame({
     'wydatki': [2000, 2500, 3000, 1800, 2200, 4000, 4500, 3500, 3000, 2800]
 })
 
-print("Dane klientów:")
-print(klienci.head())
-
 # Grupowanie klientów w 3 segmenty
 kmeans = KMeans(n_clusters=3, random_state=42)
 klienci['segment'] = kmeans.fit_predict(klienci[['wiek', 'wydatki']])
 
-print("\nSegmenty klientów:")
+# Przygotuj wyniki do wyświetlenia
+dane_klientow = klienci.head().to_string()
+segmenty_info = []
 for i in range(3):
     segment = klienci[klienci['segment'] == i]
-    print(f"Segment {i}: średni wiek {segment['wiek'].mean():.0f}, "
-          f"średnie wydatki {segment['wydatki'].mean():.0f}")
+    segmenty_info.append(f"Segment {i}: średni wiek {segment['wiek'].mean():.0f}, średnie wydatki {segment['wydatki'].mean():.0f}")
 
-print(f"\nPrzykład: klient 30 lat, wydaje 2500zł -> segment {kmeans.predict([[30, 2500]])[0]}")
+przyklad_predykcji = kmeans.predict([[30, 2500]])[0]
+
+print("Dane klientów:")
+print(dane_klientow)
+print("\nSegmenty klientów:")
+for info in segmenty_info:
+    print(info)
+print(f"\nPrzykład: klient 30 lat, wydaje 2500zł -> segment {przyklad_predykcji}")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż wyniki segmentacji klientów
+
+```{python}
+#| echo: false
+
+print("Dane klientów:")
+print(dane_klientow)
+print("\nSegmenty klientów:")
+for info in segmenty_info:
+    print(info)
+print(f"\nPrzykład: klient 30 lat, wydaje 2500zł -> segment {przyklad_predykcji}")
+```
+:::
+
+
 **Real-world zastosowania:**
+
 - Segmentacja klientów (marketing)
 - Wykrywanie anomalii (cyberbezpieczeństwo)
 - Analiza koszykowa (co kupują razem)
@@ -110,8 +150,8 @@ print(f"\nPrzykład: klient 30 lat, wydaje 2500zł -> segment {kmeans.predict([[
 **Agent uczy się przez interakcję i nagrody/kary**
 
 ```{python}
-#| label: reinforcement-example
-#| warning: false
+#| echo: true
+#| output: false
 
 # Przykład koncepcyjny: optymalizacja reklam
 class SimpleAgent:
@@ -133,17 +173,20 @@ class SimpleAgent:
             self.rewards[ad_type] += 1
     
     def get_stats(self):
+        stats_list = []
         for i, ad_type in enumerate(self.ad_types):
             rate = self.rewards[i] / max(self.counts[i], 1) * 100
-            print(f"{ad_type}: {self.counts[i]} pokazań, {self.rewards[i]} kliknięć ({rate:.1f}%)")
+            stats_list.append(f"{ad_type}: {self.counts[i]} pokazań, {self.rewards[i]} kliknięć ({rate:.1f}%)")
+        return stats_list
 
 # Symulacja
 import numpy as np
 np.random.seed(42)
 
 agent = SimpleAgent()
-print("🎯 Symulacja optymalizacji reklam:")
-print("Agent uczy się, które reklamy działają najlepiej...\n")
+symulacja_wyniki = []
+symulacja_wyniki.append("🎯 Symulacja optymalizacji reklam:")
+symulacja_wyniki.append("Agent uczy się, które reklamy działają najlepiej...")
 
 for day in range(10):
     ad = agent.choose_ad()
@@ -151,13 +194,33 @@ for day in range(10):
     click_probs = [0.1, 0.3, 0.2]  # technologiczne najlepsze
     clicked = np.random.random() < click_probs[ad]
     agent.update_reward(ad, clicked)
-    print(f"Dzień {day+1}: pokazano {agent.ad_types[ad]}, kliknięta: {clicked}")
+    symulacja_wyniki.append(f"Dzień {day+1}: pokazano {agent.ad_types[ad]}, kliknięta: {clicked}")
 
+koncowe_statystyki = agent.get_stats()
+
+for wynik in symulacja_wyniki:
+    print(wynik)
 print("\n📊 Końcowe statystyki:")
-agent.get_stats()
+for stat in koncowe_statystyki:
+    print(stat)
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż symulację agenta reklamowego
+
+```{python}
+#| echo: false
+
+for wynik in symulacja_wyniki:
+    print(wynik)
+print("\n📊 Końcowe statystyki:")
+for stat in koncowe_statystyki:
+    print(stat)
+```
+:::
+
 **Real-world zastosowania:**
+
 - Gry komputerowe (AI graczy)
 - Autonomiczne pojazdy
 - Optymalizacja reklam online
@@ -178,8 +241,8 @@ agent.get_stats()
 ## 🔧 Podstawowe kroki projektu ML
 
 ```{python}
-#| label: ml-workflow-example
-#| warning: false
+#| echo: true
+#| output: false
 
 # Kompletny workflow ML na przykładzie klasyfikacji iris
 import pandas as pd
@@ -190,19 +253,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
-print("🔬 Kompletny workflow projektu ML")
-print("=" * 40)
-
 # 1. Załaduj i poznaj dane
 iris = load_iris()
 data = pd.DataFrame(iris.data, columns=iris.feature_names)
 data['target'] = iris.target
 target_names = iris.target_names
-
-print("1️⃣ Dane załadowane:")
-print(f"Kształt: {data.shape}")
-print(f"Klasy: {target_names}")
-print(data.head(3))
 
 # 2. Przygotuj dane (czyszczenie, encoding)
 X = data.drop('target', axis=1)
@@ -210,37 +265,61 @@ y = data['target']
 
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
-print(f"\n2️⃣ Dane przeskalowane (pierwsze 3 cechy pierwszej próbki):")
-print(f"Przed: {X.iloc[0, :3].values}")
-print(f"Po: {X_scaled[0, :3]}")
 
 # 3. Podziel na train/test
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
-print(f"\n3️⃣ Podział danych:")
-print(f"Train: {len(X_train)} próbek")
-print(f"Test: {len(X_test)} próbek")
 
 # 4. Wybierz i wytrenuj model
 model = RandomForestClassifier(random_state=42)
 model.fit(X_train, y_train)
-print(f"\n4️⃣ Model wytrenowany: RandomForestClassifier")
 
 # 5. Oceń wyniki
 predictions = model.predict(X_test)
 accuracy = accuracy_score(y_test, predictions)
-print(f"\n5️⃣ Wyniki:")
-print(f"Dokładność: {accuracy:.2%}")
 
 # Przykład predykcji
 sample_flower = X_test[0:1]
 predicted_class = model.predict(sample_flower)[0]
 predicted_name = target_names[predicted_class]
 actual_name = target_names[y_test.iloc[0]]
-print(f"\nPrzykład predykcji:")
-print(f"Przewidywana klasa: {predicted_name}")
-print(f"Rzeczywista klasa: {actual_name}")
-print("✅ Poprawnie!" if predicted_name == actual_name else "❌ Błąd")
+
+# Przygotuj wyniki do wyświetlenia
+wyniki_workflow = []
+wyniki_workflow.append("🔬 Kompletny workflow projektu ML")
+wyniki_workflow.append("=" * 40)
+wyniki_workflow.append("1️⃣ Dane załadowane:")
+wyniki_workflow.append(f"Kształt: {data.shape}")
+wyniki_workflow.append(f"Klasy: {target_names}")
+wyniki_workflow.append(f"Pierwsze 3 wiersze:\n{data.head(3).to_string()}")
+wyniki_workflow.append(f"\n2️⃣ Dane przeskalowane (pierwsze 3 cechy pierwszej próbki):")
+wyniki_workflow.append(f"Przed: {X.iloc[0, :3].values}")
+wyniki_workflow.append(f"Po: {X_scaled[0, :3]}")
+wyniki_workflow.append(f"\n3️⃣ Podział danych:")
+wyniki_workflow.append(f"Train: {len(X_train)} próbek")
+wyniki_workflow.append(f"Test: {len(X_test)} próbek")
+wyniki_workflow.append(f"\n4️⃣ Model wytrenowany: RandomForestClassifier")
+wyniki_workflow.append(f"\n5️⃣ Wyniki:")
+wyniki_workflow.append(f"Dokładność: {accuracy:.2%}")
+wyniki_workflow.append(f"\nPrzykład predykcji:")
+wyniki_workflow.append(f"Przewidywana klasa: {predicted_name}")
+wyniki_workflow.append(f"Rzeczywista klasa: {actual_name}")
+wyniki_workflow.append("✅ Poprawnie!" if predicted_name == actual_name else "❌ Błąd")
+
+for wynik in wyniki_workflow:
+    print(wynik)
 ```
+
+::: {.callout-note collapse="true"}
+## Pokaż kompletny workflow ML
+
+```{python}
+#| echo: false
+
+for wynik in wyniki_workflow:
+    print(wynik)
+```
+:::
+
 
 ---
 

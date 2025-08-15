@@ -19,6 +19,9 @@ Szukamy takiej linii `y = ax + b`, która najlepiej "przechodzi" przez nasze pun
 ## 🏠 Praktyczny przykład: predykcja cen mieszkań
 
 ```{python}
+#| echo: true
+#| output: false
+
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -50,6 +53,17 @@ print("Podstawowe statystyki:")
 print(data.describe())
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż statystyki
+
+```{python}
+#| echo: false
+
+print("Podstawowe statystyki:")
+print(data.describe())
+```
+:::
+
 ---
 
 ## 🔧 Trenowanie modelu krok po kroku
@@ -57,10 +71,11 @@ print(data.describe())
 ### 1) Przygotowanie danych
 
 ```{python}
+#| echo: true
+#| output: false
+
 # Sprawdzenie korelacji - które zmienne są najważniejsze?
 correlation = data.corr()['cena'].sort_values(ascending=False)
-print("Korelacja z ceną:")
-print(correlation)
 
 # Podział na features (X) i target (y)
 X = data[['powierzchnia', 'liczba_pokoi', 'wiek_budynku', 'odleglosc_centrum']]
@@ -71,14 +86,34 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
 
+print("Korelacja z ceną:")
+print(correlation)
+
 print(f"Dane treningowe: {X_train.shape[0]} mieszkań")
 print(f"Dane testowe: {X_test.shape[0]} mieszkań")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż korelacje oraz dane treningowe
+
+```{python}
+#| echo: false
+
+print("Korelacja z ceną:")
+print(correlation)
+
+print(f"Dane treningowe: {X_train.shape[0]} mieszkań")
+print(f"Dane testowe: {X_test.shape[0]} mieszkań")
+```
+:::
+
 ### 2) Trenowanie modelu
 
 ```{python}
-# U}tworzenie i trenowanie modelu
+#| echo: true
+#| output: false
+
+# Utworzenie i trenowanie modelu
 model = LinearRegression()
 model.fit(X_train, y_train)
 
@@ -89,9 +124,26 @@ for feature, coef in zip(X.columns, model.coef_):
 print(f"Intercept (stała): {model.intercept_:.0f} zł")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż współczynniki
+
+```{python}
+#| echo: false
+
+# Sprawdzenie współczynników
+print("Współczynniki modelu:")
+for feature, coef in zip(X.columns, model.coef_):
+    print(f"{feature}: {coef:.0f} zł")
+print(f"Intercept (stała): {model.intercept_:.0f} zł")
+```
+:::
+
 ### 3) Ewaluacja wyników
 
 ```{python}
+#| echo: true
+#| output: false
+
 # Predykcje na zbiorze testowym
 y_pred = model.predict(X_test)
 
@@ -113,16 +165,33 @@ for i in range(5):
           f"przewidywana={przewidywana:.0f}zł, błąd={błąd:.0f}zł")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż współczynniki
+
+```{python}
+#| echo: false
+
+print(f"\nWyniki modelu:")
+print(f"Mean Absolute Error: {mae:.0f} zł")
+print(f"R² Score: {r2:.3f}")
+print(f"Średni błąd to {mae/data['cena'].mean()*100:.1f}% ceny mieszkania")
+
+for i in range(5):
+    rzeczywista = y_test.iloc[i]
+    przewidywana = y_pred[i]
+    błąd = abs(rzeczywista - przewidywana)
+    print(f"Mieszkanie {i+1}: rzeczywista={rzeczywista:.0f}zł, "
+          f"przewidywana={przewidywana:.0f}zł, błąd={błąd:.0f}zł")
+```
+:::
+
 ---
 
 ## 📊 Wizualizacja wyników
 
 ```{python}
-#| label: fig-regression-analysis
-#| fig-cap: "Analiza wyników modelu Linear Regression"
-#| fig-width: 10
-#| fig-height: 6
-#| warning: false
+#| echo: true
+#| output: false
 
 import pandas as pd
 import numpy as np
@@ -159,7 +228,55 @@ model = LinearRegression()
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
-# Wykres: rzeczywiste vs przewidywane ceny
+# Oblicz metryki
+mae = mean_absolute_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+# Przygotuj wykresy
+plt.figure(figsize=(10, 6))
+
+plt.subplot(1, 2, 1)
+plt.scatter(y_test, y_pred, alpha=0.6)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+plt.xlabel('Rzeczywiste ceny')
+plt.ylabel('Przewidywane ceny')
+plt.title('Rzeczywiste vs Przewidywane')
+
+plt.subplot(1, 2, 2)
+residuals = y_test - y_pred
+plt.scatter(y_pred, residuals, alpha=0.6)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Przewidywane ceny')
+plt.ylabel('Residuals (błędy)')
+plt.title('Analiza residuals')
+
+plt.tight_layout()
+
+# Zapisz wykres do zmiennej
+import io
+import base64
+buf = io.BytesIO()
+plt.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+buf.seek(0)
+plt.close()
+
+# Przygotuj przykładowe predykcje
+przykladowe_predykcje = []
+for i in range(3):
+    rzeczywista = y_test.iloc[i]
+    przewidywana = y_pred[i]
+    blad = abs(rzeczywista - przewidywana)
+    przykladowe_predykcje.append(f"Mieszkanie {i+1}: rzeczywista={rzeczywista:.0f}zł, przewidywana={przewidywana:.0f}zł, błąd={blad:.0f}zł")
+
+print(f"Wyniki modelu Linear Regression:")
+print(f"Mean Absolute Error: {mae:.0f} zł")
+print(f"R² Score: {r2:.3f}")
+print(f"Średni błąd to {mae/data['cena'].mean()*100:.1f}% ceny mieszkania")
+print(f"\nPrzykładowe predykcje:")
+for pred in przykladowe_predykcje:
+    print(pred)
+
+# Odtwórz wykres
 plt.figure(figsize=(10, 6))
 
 plt.subplot(1, 2, 1)
@@ -181,12 +298,55 @@ plt.tight_layout()
 plt.show()
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż wyniki i wykresy analizy
+
+```{python}
+#| echo: false
+#| fig-cap: "Analiza wyników modelu Linear Regression"
+#| fig-width: 10
+#| fig-height: 6
+
+print(f"Wyniki modelu Linear Regression:")
+print(f"Mean Absolute Error: {mae:.0f} zł")
+print(f"R² Score: {r2:.3f}")
+print(f"Średni błąd to {mae/data['cena'].mean()*100:.1f}% ceny mieszkania")
+print(f"\nPrzykładowe predykcje:")
+for pred in przykladowe_predykcje:
+    print(pred)
+
+# Odtwórz wykres
+plt.figure(figsize=(10, 6))
+
+plt.subplot(1, 2, 1)
+plt.scatter(y_test, y_pred, alpha=0.6)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+plt.xlabel('Rzeczywiste ceny')
+plt.ylabel('Przewidywane ceny')
+plt.title('Rzeczywiste vs Przewidywane')
+
+plt.subplot(1, 2, 2)
+residuals = y_test - y_pred
+plt.scatter(y_pred, residuals, alpha=0.6)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Przewidywane ceny')
+plt.ylabel('Residuals (błędy)')
+plt.title('Analiza residuals')
+
+plt.tight_layout()
+plt.show()
+```
+:::
+
 ---
 
 ## 🎯 Praktyczne zastosowania Linear Regression
 
 ### 1) **Biznesowe**
 ```{python}
+#| echo: true
+#| output: false
+
 # Przewidywanie sprzedaży na podstawie budżetu marketingowego
 sales_data = pd.DataFrame({
     'marketing_budget': [10000, 15000, 20000, 25000, 30000],
@@ -201,8 +361,21 @@ new_sales = model_sales.predict([[35000]])
 print(f"Przewidywana sprzedaż przy budżecie 35k: {new_sales[0]:.0f}")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż przewidywaną sprzedaż
+
+```{python}
+#| echo: false
+
+print(f"Przewidywana sprzedaż przy budżecie 35k: {new_sales[0]:.0f}")
+```
+:::
+
 ### 2) **Analizy finansowe**
 ```{python}
+#| echo: true
+#| output: false
+
 # Relacja między PKB a konsumpcją
 economics_data = pd.DataFrame({
     'pkb_per_capita': [25000, 30000, 35000, 40000, 45000],
@@ -216,12 +389,25 @@ model_econ.fit(economics_data[['pkb_per_capita']], economics_data['konsumpcja'])
 print(f"Na każde dodatkowe 1000zł PKB, konsumpcja rośnie o: {model_econ.coef_[0]:.0f}zł")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż współczynnik skłonności do konsumpcji
+
+```{python}
+#| echo: false
+
+print(f"Na każde dodatkowe 1000zł PKB, konsumpcja rośnie o: {model_econ.coef_[0]:.0f}zł")
+```
+:::
+
 ---
 
 ## ⚠️ Najczęstsze pułapki i jak ich unikać
 
 ### 1) **Overfitting z wieloma zmiennymi**
 ```{python}
+#| echo: true
+#| output: false
+
 # ZŁO: za dużo features względem danych
 # Jeśli masz 100 mieszkań, nie używaj 50 features!
 
@@ -237,8 +423,29 @@ def check_features_ratio(X, y):
 check_features_ratio(X_train, y_train)
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż wyniki
+
+```{python}
+#| echo: false
+
+def check_features_ratio(X, y):
+    ratio = len(y) / X.shape[1]
+    if ratio < 10:
+        print(f"⚠️ Uwaga: masz tylko {ratio:.1f} obserwacji na feature!")
+        print("Rozważ: więcej danych lub mniej features")
+    else:
+        print(f"✅ OK: {ratio:.1f} obserwacji na feature")
+
+check_features_ratio(X_train, y_train)
+```
+:::
+
 ### 2) **Sprawdzanie założeń linearności**
 ```{python}
+#| echo: true
+#| output: false
+
 # Sprawdź czy zależności są rzeczywiście liniowe
 from scipy import stats
 
@@ -250,14 +457,28 @@ for col in X.columns:
         print(f"⚠️ {col} ma słabą korelację - może nie być przydatna")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż wyniki korelacji
+
+```{python}
+#| echo: false
+
+from scipy import stats
+
+for col in X.columns:
+    correlation, p_value = stats.pearsonr(data[col], data['cena'])
+    print(f"{col}: korelacja={correlation:.3f}, p-value={p_value:.3f}")
+    
+    if abs(correlation) < 0.1:
+        print(f"⚠️ {col} ma słabą korelację - może nie być przydatna")
+```
+:::
+
 ### 3) **Wielokoliniowość** (features korelują między sobą)
 
 ```{python}
-#| label: fig-correlation-heatmap  
-#| fig-cap: "Mapa korelacji między zmiennymi"
-#| fig-width: 8
-#| fig-height: 6
-#| warning: false
+#| echo: true
+#| output: false
 
 import pandas as pd
 import numpy as np
@@ -275,21 +496,63 @@ X = pd.DataFrame({
     'odleglosc_centrum': np.random.exponential(5, n_samples)
 })
 
-# Sprawdź korelacje między features
-plt.figure(figsize=(8, 6))
+# Oblicz korelacje między features
 correlation_matrix = X.corr()
+
+# Przygotuj wykres
+plt.figure(figsize=(8, 6))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
+plt.title('Korelacje między features')
+plt.close()
+
+print("Macierz korelacji między zmiennymi:")
+print(correlation_matrix)
+print("\nInterpretacja:")
+print("• Wartości blisko 1.0 = silna korelacja pozytywna")
+print("• Wartości blisko -1.0 = silna korelacja negatywna") 
+print("• Wartości blisko 0.0 = brak korelacji")
+print("\nJeśli korelacja między features > 0.8, usuń jedną z nich (multicollinearity)!")
+
+plt.figure(figsize=(8, 6))
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
 plt.title('Korelacje między features')
 plt.show()
+```
+
+::: {.callout-note collapse="true"}
+## Pokaż mapę korelacji
+
+```{python}
+#| echo: false
+#| fig-cap: "Mapa korelacji między zmiennymi"
+#| fig-width: 8
+#| fig-height: 6
+
+print("Macierz korelacji między zmiennymi:")
+print(correlation_matrix)
+print("\nInterpretacja:")
+print("• Wartości blisko 1.0 = silna korelacja pozytywna")
+print("• Wartości blisko -1.0 = silna korelacja negatywna") 
+print("• Wartości blisko 0.0 = brak korelacji")
+print("\nJeśli korelacja między features > 0.8, usuń jedną z nich (multicollinearity)!")
+
+plt.figure(figsize=(8, 6))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
+plt.title('Korelacje między features')
+plt.show()
+```
+:::
 
 # Jeśli korelacja między features > 0.8, usuń jedną z nich!
-```
 
 ---
 
 ## 🔧 Parametry do tuningu
 
 ```{python}
+#| echo: true
+#| output: false
+
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.pipeline import Pipeline
 
@@ -323,6 +586,17 @@ print(f"Ridge R²: {ridge_r2:.3f}")
 print(f"Lasso R²: {lasso_r2:.3f}")
 ```
 
+::: {.callout-note collapse="true"}
+## Pokaż wyniki predykcji cen
+
+```{python}
+#| echo: false
+print(f"Polynomial Regression R²: {poly_r2:.3f}")
+print(f"Ridge R²: {ridge_r2:.3f}")
+print(f"Lasso R²: {lasso_r2:.3f}")
+```
+:::
+
 ---
 
 ## 🌍 Real-world przykłady zastosowań
@@ -337,12 +611,14 @@ print(f"Lasso R²: {lasso_r2:.3f}")
 ## 💡 Kiedy używać Linear Regression?
 
 **✅ UŻYJ GDY:**
+
 - Przewidujesz wartości liczbowe (continuous target)
 - Zależności wydają się liniowe
 - Chcesz interpretowalny model
 - Masz stosunkowo mało features
 
 **❌ NIE UŻYWAJ GDY:**
+
 - Target jest kategoryczny (użyj klasyfikacji)
 - Zależności są bardzo nieliniowe (użyj Random Forest, XGBoost)
 - Masz tysiące features (użyj regularization)
