@@ -233,7 +233,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="praktyczny-przykład-predykcja-cen-mieszkań" class="level2">
 <h2 class="anchored" data-anchor-id="praktyczny-przykład-predykcja-cen-mieszkań">🏠 Praktyczny przykład: predykcja cen mieszkań</h2>
-<div id="d393d578" class="cell" data-execution_count="1">
+<div id="3472094c" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
@@ -276,7 +276,7 @@ Pokaż statystyki
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="da759dc5" class="cell" data-execution_count="2">
+<div id="c5f70b28" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>Podstawowe statystyki:
        powierzchnia  liczba_pokoi  wiek_budynku  odleglosc_centrum  \
@@ -309,7 +309,7 @@ max    1.440259e+06  </code></pre>
 <h2 class="anchored" data-anchor-id="trenowanie-modelu-krok-po-kroku">🔧 Trenowanie modelu krok po kroku</h2>
 <section id="przygotowanie-danych" class="level3">
 <h3 class="anchored" data-anchor-id="przygotowanie-danych">1) Przygotowanie danych</h3>
-<div id="90689e66" class="cell" data-execution_count="3">
+<div id="c4f6dd7f" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sprawdzenie korelacji - które zmienne są najważniejsze?</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>correlation <span class="op">=</span> data.corr()[<span class="st">'cena'</span>].sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -340,7 +340,7 @@ Pokaż korelacje oraz dane treningowe
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="3bb9e4e4" class="cell" data-execution_count="4">
+<div id="caa8f4d0" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
 <pre><code>Korelacja z ceną:
 cena                 1.000000
@@ -359,7 +359,7 @@ Dane testowe: 200 mieszkań</code></pre>
 </section>
 <section id="trenowanie-modelu" class="level3">
 <h3 class="anchored" data-anchor-id="trenowanie-modelu">2) Trenowanie modelu</h3>
-<div id="213f5f9b" class="cell" data-execution_count="5">
+<div id="22660586" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Utworzenie i trenowanie modelu</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> LinearRegression()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span>
@@ -382,7 +382,7 @@ Pokaż współczynniki
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="ba48d79b" class="cell" data-execution_count="6">
+<div id="8d40e247" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-stdout">
 <pre><code>Współczynniki modelu:
 powierzchnia: 7924 zł
@@ -398,7 +398,7 @@ Intercept (stała): 104042 zł</code></pre>
 </section>
 <section id="ewaluacja-wyników" class="level3">
 <h3 class="anchored" data-anchor-id="ewaluacja-wyników">3) Ewaluacja wyników</h3>
-<div id="151e9b92" class="cell" data-execution_count="7">
+<div id="094f3655" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predykcje na zbiorze testowym</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> model.predict(X_test)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -425,13 +425,13 @@ Intercept (stała): 104042 zł</code></pre>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Pokaż współczynniki
+Pokaż wyniki modelu
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="9b3a4596" class="cell" data-execution_count="8">
+<div id="61b6d3cf" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Wyniki modelu:
@@ -453,7 +453,7 @@ Mieszkanie 5: rzeczywista=445427zł, przewidywana=383199zł, błąd=62228zł</co
 </section>
 <section id="wizualizacja-wyników" class="level2">
 <h2 class="anchored" data-anchor-id="wizualizacja-wyników">📊 Wizualizacja wyników</h2>
-<div id="c87e70ed" class="cell" data-execution_count="9">
+<div id="0791f467" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
@@ -570,7 +570,7 @@ Pokaż wyniki i wykresy analizy
 </div>
 <div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="d160629f" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="10">
+<div id="13c09728" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="10">
 <div class="cell-output cell-output-stdout">
 <pre><code>Wyniki modelu Linear Regression:
 Mean Absolute Error: 38912 zł
@@ -600,7 +600,7 @@ Mieszkanie 3: rzeczywista=326702zł, przewidywana=274297zł, błąd=52405zł</co
 <h2 class="anchored" data-anchor-id="praktyczne-zastosowania-linear-regression">🎯 Praktyczne zastosowania Linear Regression</h2>
 <section id="biznesowe" class="level3">
 <h3 class="anchored" data-anchor-id="biznesowe">1) <strong>Biznesowe</strong></h3>
-<div id="08d7105e" class="cell" data-execution_count="11">
+<div id="ccfb4539" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Przewidywanie sprzedaży na podstawie budżetu marketingowego</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>sales_data <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'marketing_budget'</span>: [<span class="dv">10000</span>, <span class="dv">15000</span>, <span class="dv">20000</span>, <span class="dv">25000</span>, <span class="dv">30000</span>],</span>
@@ -626,7 +626,7 @@ Pokaż przewidywaną sprzedaż
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="7d8c3e31" class="cell" data-execution_count="12">
+<div id="7e79d725" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-stdout">
 <pre><code>Przewidywana sprzedaż przy budżecie 35k: 300000</code></pre>
 </div>
@@ -637,7 +637,7 @@ Pokaż przewidywaną sprzedaż
 </section>
 <section id="analizy-finansowe" class="level3">
 <h3 class="anchored" data-anchor-id="analizy-finansowe">2) <strong>Analizy finansowe</strong></h3>
-<div id="020cf24d" class="cell" data-execution_count="13">
+<div id="f164feda" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Relacja między PKB a konsumpcją</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>economics_data <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'pkb_per_capita'</span>: [<span class="dv">25000</span>, <span class="dv">30000</span>, <span class="dv">35000</span>, <span class="dv">40000</span>, <span class="dv">45000</span>],</span>
@@ -662,7 +662,7 @@ Pokaż współczynnik skłonności do konsumpcji
 </div>
 <div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="cdf1a029" class="cell" data-execution_count="14">
+<div id="a1aedfa4" class="cell" data-execution_count="14">
 <div class="cell-output cell-output-stdout">
 <pre><code>Na każde dodatkowe 1000zł PKB, konsumpcja rośnie o: 1zł</code></pre>
 </div>
@@ -677,7 +677,7 @@ Pokaż współczynnik skłonności do konsumpcji
 <h2 class="anchored" data-anchor-id="najczęstsze-pułapki-i-jak-ich-unikać">⚠️ Najczęstsze pułapki i jak ich unikać</h2>
 <section id="overfitting-z-wieloma-zmiennymi" class="level3">
 <h3 class="anchored" data-anchor-id="overfitting-z-wieloma-zmiennymi">1) <strong>Overfitting z wieloma zmiennymi</strong></h3>
-<div id="fef82d42" class="cell" data-execution_count="15">
+<div id="bc3d405e" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ZŁO: za dużo features względem danych</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Jeśli masz 100 mieszkań, nie używaj 50 features!</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -704,7 +704,7 @@ Pokaż wyniki
 </div>
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="1f419359" class="cell" data-execution_count="16">
+<div id="17b54f67" class="cell" data-execution_count="16">
 <div class="cell-output cell-output-stdout">
 <pre><code>✅ OK: 200.0 obserwacji na feature</code></pre>
 </div>
@@ -715,7 +715,7 @@ Pokaż wyniki
 </section>
 <section id="sprawdzanie-założeń-linearności" class="level3">
 <h3 class="anchored" data-anchor-id="sprawdzanie-założeń-linearności">2) <strong>Sprawdzanie założeń linearności</strong></h3>
-<div id="0fed6089" class="cell" data-execution_count="17">
+<div id="16bfd93e" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sprawdź czy zależności są rzeczywiście liniowe</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -738,7 +738,7 @@ Pokaż wyniki korelacji
 </div>
 <div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="22296916" class="cell" data-execution_count="18">
+<div id="176b7584" class="cell" data-execution_count="18">
 <div class="cell-output cell-output-stdout">
 <pre><code>powierzchnia: korelacja=0.949, p-value=0.000
 liczba_pokoi: korelacja=0.025, p-value=0.428
@@ -754,7 +754,7 @@ odleglosc_centrum: korelacja=-0.042, p-value=0.184
 </section>
 <section id="wielokoliniowość-features-korelują-między-sobą" class="level3">
 <h3 class="anchored" data-anchor-id="wielokoliniowość-features-korelują-między-sobą">3) <strong>Wielokoliniowość</strong> (features korelują między sobą)</h3>
-<div id="4a8003d3" class="cell" data-execution_count="19">
+<div id="68368480" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -805,7 +805,7 @@ Pokaż mapę korelacji
 </div>
 <div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="c456b5dd" class="cell" data-fig-height="6" data-fig-width="8" data-execution_count="20">
+<div id="d4808787" class="cell" data-fig-height="6" data-fig-width="8" data-execution_count="20">
 <div class="cell-output cell-output-stdout">
 <pre><code>Macierz korelacji między zmiennymi:
                    powierzchnia  liczba_pokoi  wiek_budynku  odleglosc_centrum
@@ -840,7 +840,7 @@ Jeśli korelacja między features &gt; 0.8, usuń jedną z nich (multicollineari
 <hr>
 <section id="parametry-do-tuningu" class="level2">
 <h2 class="anchored" data-anchor-id="parametry-do-tuningu">🔧 Parametry do tuningu</h2>
-<div id="3c70f817" class="cell" data-execution_count="21">
+<div id="d1b0757b" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler, PolynomialFeatures</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -885,7 +885,7 @@ Pokaż wyniki predykcji cen
 </div>
 <div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="e3b76714" class="cell" data-execution_count="22">
+<div id="7e79079f" class="cell" data-execution_count="22">
 <div class="cell-output cell-output-stdout">
 <pre><code>Polynomial Regression R²: 0.933
 Ridge R²: 0.934
@@ -1558,7 +1558,7 @@ Lasso R²: 0.934</code></pre>
 <span id="cb23-180"><a href="#cb23-180" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb23-181"><a href="#cb23-181" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-182"><a href="#cb23-182" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse="true"}</span>
-<span id="cb23-183"><a href="#cb23-183" aria-hidden="true" tabindex="-1"></a><span class="fu">## Pokaż współczynniki</span></span>
+<span id="cb23-183"><a href="#cb23-183" aria-hidden="true" tabindex="-1"></a><span class="fu">## Pokaż wyniki modelu</span></span>
 <span id="cb23-184"><a href="#cb23-184" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-187"><a href="#cb23-187" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb23-188"><a href="#cb23-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>

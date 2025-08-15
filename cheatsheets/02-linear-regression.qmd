@@ -166,7 +166,7 @@ for i in range(5):
 ```
 
 ::: {.callout-note collapse="true"}
-## Pokaż współczynniki
+## Pokaż wyniki modelu
 
 ```{python}
 #| echo: false
