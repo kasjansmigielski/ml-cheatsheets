@@ -1,0 +1,65 @@
+---
+title: "Witaj w świecie Machine Learning!"
+page-layout: article
+---
+
+# 🤖 ML Cheatsheets
+
+Witaj w praktycznej kolekcji ściąg z Machine Learning! Znajdziesz tutaj **algorytmy, teorię i real-world przykłady** przedstawione w przystępny sposób dla kursantów Data Science. Każda ściągawka to kompaktowa porcja wiedzy gotowa do zastosowania.
+
+## 🎯 Co znajdziesz w każdej ściągawce?
+
+- **Wyjaśnienie algorytmu** - jak działa i dlaczego
+- **Praktyczne przykłady kodu** gotowe do skopiowania i uruchomienia
+- **Real-world zastosowania** - kiedy i gdzie użyć
+- **Kluczowe parametry** - co można dostroić i jak
+- **Tipsy od praktyków** - na co uważać w rzeczywistych projektach
+
+## 📋 Jak korzystać z ML Cheatsheets?
+
+**Najlepsza metoda nauki:**
+
+1. **Przeczytaj teorię** - zrozum podstawy algorytmu
+2. **Przeanalizuj przykład** - zobacz jak teoria przekłada się na kod  
+3. **Skopiuj snippety** - użyj przyciska 📋 Copy w prawym górnym rogu
+4. **Testuj w swoim środowisku** - Jupyter, Colab, VS Code
+5. **Eksperymentuj z parametrami** - zmień wartości i obserwuj efekty!
+
+::: {.callout-tip}
+## 💡 Pro tip dla kursantów
+Nie tylko kopiuj kod - **zrozum** co robi każda linia. Spróbuj zmienić dane wejściowe, parametry algorytmu lub dodać własne modyfikacje. To najlepszy sposób na naukę ML!
+:::
+
+## 📚 Dostępne ściągi ML
+
+### 🚀 Dla początkujących
+- [**Wprowadzenie do ML**](cheatsheets/01-intro-ml.qmd) - Czym jest ML i jakie są główne rodzaje algorytmów
+
+### 📈 Algorytmy regresji
+- [**Linear Regression**](cheatsheets/02-linear-regression.qmd) - Predykcja wartości liczbowych
+
+### 🌳 Algorytmy klasyfikacji  
+- [**Decision Trees**](cheatsheets/03-decision-trees.qmd) - Proste drzewa decyzyjne
+
+::: {.callout-note}
+## 🔥 Kolejne ściągi w przygotowaniu!
+- K-Means Clustering (segmentacja klientów)
+- Random Forest (ensembles)
+- Logistic Regression (klasyfikacja binarna)
+- Feature Engineering (przygotowanie danych)
+- Model Evaluation (metryki i walidacja)
+
+Śledź aktualizacje!
+:::
+
+## 🚀 Szybki start
+
+1. **Zacznij od podstaw** - [Wprowadzenie do ML](cheatsheets/01-intro-ml.qmd)
+2. **Wybierz algorytm** który Cię interesuje z menu ML Cheatsheets  
+3. **Przeczytaj teorię** - zrozum jak działa algorytm
+4. **Skopiuj kod** (ikona 📋 Copy w prawym górnym rogu bloku)
+5. **Testuj w praktyce** - uruchom w Jupyter/Colab i eksperymentuj!
+
+---
+
+**Powodzenia w nauce Machine Learning!** 🚀🤖

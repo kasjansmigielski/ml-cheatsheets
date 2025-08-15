@@ -1,0 +1,279 @@
+---
+title: "Wprowadzenie do Machine Learning — fundament"
+format:
+  html:
+    code-tools: true
+---
+
+## 🤖 Czym jest Machine Learning?
+
+**Machine Learning (ML)** to dziedzina informatyki, która pozwala komputerom **uczyć się i podejmować decyzje na podstawie danych**, bez konieczności programowania każdej reguły z góry.
+
+::: {.callout-note}
+## 💡 Intuicja
+Zamiast pisać kod "jeśli temperatura > 25°C, to będzie słonecznie", **ML pozwala algorytmowi samemu odkryć** te zależności z historycznych danych pogodowych.
+:::
+
+---
+
+## 📊 Główne rodzaje ML
+
+### 1) **Supervised Learning** (Uczenie nadzorowane)
+**Mamy dane + znamy prawidłowe odpowiedzi**
+
+```{python}
+#| label: supervised-example
+#| warning: false
+
+# Przykład: predykcja ceny domu
+# Dane wejściowe: powierzchnia, lokalizacja, rok budowy
+# Cel: przewidzieć cenę
+
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+
+# Przykładowe dane
+data = pd.DataFrame({
+    'powierzchnia': [50, 75, 100, 120, 150],
+    'rok_budowy': [1990, 2000, 2010, 2015, 2020],
+    'cena': [300000, 400000, 550000, 650000, 800000]  # znamy prawdziwe ceny!
+})
+
+print("Dane treningowe:")
+print(data)
+
+# Trenowanie modelu
+model = LinearRegression()
+X = data[['powierzchnia', 'rok_budowy']]
+y = data['cena']
+model.fit(X, y)
+
+# Predykcja dla nowego domu
+nowy_dom = [[90, 2005]]
+przewidywana_cena = model.predict(nowy_dom)
+print(f"\nPredykcja dla domu 90m², rok 2005:")
+print(f"Przewidywana cena: {przewidywana_cena[0]:.0f} zł")
+```
+
+**Real-world zastosowania:**
+- Predykcja cen akcji/nieruchomości
+- Diagnoza medyczna (klasyfikacja chorób)
+- Filtrowanie spamu w emailach
+- Rozpoznawanie mowy/obrazów
+
+---
+
+### 2) **Unsupervised Learning** (Uczenie nienadzorowane)  
+**Mamy tylko dane, szukamy ukrytych wzorców**
+
+```{python}
+#| label: unsupervised-example
+#| warning: false
+
+# Przykład: segmentacja klientów sklepu
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+# Dane klientów: wiek i wydatki miesięczne
+klienci = pd.DataFrame({
+    'wiek': [25, 30, 35, 22, 28, 45, 50, 55, 60, 65],
+    'wydatki': [2000, 2500, 3000, 1800, 2200, 4000, 4500, 3500, 3000, 2800]
+})
+
+print("Dane klientów:")
+print(klienci.head())
+
+# Grupowanie klientów w 3 segmenty
+kmeans = KMeans(n_clusters=3, random_state=42)
+klienci['segment'] = kmeans.fit_predict(klienci[['wiek', 'wydatki']])
+
+print("\nSegmenty klientów:")
+for i in range(3):
+    segment = klienci[klienci['segment'] == i]
+    print(f"Segment {i}: średni wiek {segment['wiek'].mean():.0f}, "
+          f"średnie wydatki {segment['wydatki'].mean():.0f}")
+
+print(f"\nPrzykład: klient 30 lat, wydaje 2500zł -> segment {kmeans.predict([[30, 2500]])[0]}")
+```
+
+**Real-world zastosowania:**
+- Segmentacja klientów (marketing)
+- Wykrywanie anomalii (cyberbezpieczeństwo)
+- Analiza koszykowa (co kupują razem)
+- Kompresja danych
+
+---
+
+### 3) **Reinforcement Learning** (Uczenie ze wzmocnieniem)
+**Agent uczy się przez interakcję i nagrody/kary**
+
+```{python}
+#| label: reinforcement-example
+#| warning: false
+
+# Przykład koncepcyjny: optymalizacja reklam
+class SimpleAgent:
+    def __init__(self):
+        # Jakie reklamy pokazywać: ["sportowe", "technologiczne", "modowe"]
+        self.ad_types = ["sportowe", "technologiczne", "modowe"]
+        self.rewards = [0, 0, 0]  # nagrody za każdy typ
+        self.counts = [0, 0, 0]   # ile razy pokazane
+    
+    def choose_ad(self):
+        # Wybierz reklamę z najwyższą średnią nagrodą
+        avg_rewards = [r/max(c,1) for r, c in zip(self.rewards, self.counts)]
+        return avg_rewards.index(max(avg_rewards))
+    
+    def update_reward(self, ad_type, clicked):
+        # Aktualizuj nagrody na podstawie kliknięć
+        self.counts[ad_type] += 1
+        if clicked:
+            self.rewards[ad_type] += 1
+    
+    def get_stats(self):
+        for i, ad_type in enumerate(self.ad_types):
+            rate = self.rewards[i] / max(self.counts[i], 1) * 100
+            print(f"{ad_type}: {self.counts[i]} pokazań, {self.rewards[i]} kliknięć ({rate:.1f}%)")
+
+# Symulacja
+import numpy as np
+np.random.seed(42)
+
+agent = SimpleAgent()
+print("🎯 Symulacja optymalizacji reklam:")
+print("Agent uczy się, które reklamy działają najlepiej...\n")
+
+for day in range(10):
+    ad = agent.choose_ad()
+    # Różne prawdopodobieństwa kliknięć dla różnych typów reklam
+    click_probs = [0.1, 0.3, 0.2]  # technologiczne najlepsze
+    clicked = np.random.random() < click_probs[ad]
+    agent.update_reward(ad, clicked)
+    print(f"Dzień {day+1}: pokazano {agent.ad_types[ad]}, kliknięta: {clicked}")
+
+print("\n📊 Końcowe statystyki:")
+agent.get_stats()
+```
+
+**Real-world zastosowania:**
+- Gry komputerowe (AI graczy)
+- Autonomiczne pojazdy
+- Optymalizacja reklam online
+- Roboty przemysłowe
+
+---
+
+## 🎯 Jak wybrać odpowiedni typ ML?
+
+| **Sytuacja** | **Typ ML** | **Przykład** |
+|-------------|------------|--------------|
+| Masz dane z prawidłowymi odpowiedziami | **Supervised** | Spam/nie-spam w emailach |
+| Chcesz znaleźć ukryte grupы | **Unsupervised** | Segmentacja klientów |
+| System ma się uczyć przez trial & error | **Reinforcement** | Bot do gier |
+
+---
+
+## 🔧 Podstawowe kroki projektu ML
+
+```{python}
+#| label: ml-workflow-example
+#| warning: false
+
+# Kompletny workflow ML na przykładzie klasyfikacji iris
+import pandas as pd
+import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+print("🔬 Kompletny workflow projektu ML")
+print("=" * 40)
+
+# 1. Załaduj i poznaj dane
+iris = load_iris()
+data = pd.DataFrame(iris.data, columns=iris.feature_names)
+data['target'] = iris.target
+target_names = iris.target_names
+
+print("1️⃣ Dane załadowane:")
+print(f"Kształt: {data.shape}")
+print(f"Klasy: {target_names}")
+print(data.head(3))
+
+# 2. Przygotuj dane (czyszczenie, encoding)
+X = data.drop('target', axis=1)
+y = data['target']
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+print(f"\n2️⃣ Dane przeskalowane (pierwsze 3 cechy pierwszej próbki):")
+print(f"Przed: {X.iloc[0, :3].values}")
+print(f"Po: {X_scaled[0, :3]}")
+
+# 3. Podziel na train/test
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+print(f"\n3️⃣ Podział danych:")
+print(f"Train: {len(X_train)} próbek")
+print(f"Test: {len(X_test)} próbek")
+
+# 4. Wybierz i wytrenuj model
+model = RandomForestClassifier(random_state=42)
+model.fit(X_train, y_train)
+print(f"\n4️⃣ Model wytrenowany: RandomForestClassifier")
+
+# 5. Oceń wyniki
+predictions = model.predict(X_test)
+accuracy = accuracy_score(y_test, predictions)
+print(f"\n5️⃣ Wyniki:")
+print(f"Dokładność: {accuracy:.2%}")
+
+# Przykład predykcji
+sample_flower = X_test[0:1]
+predicted_class = model.predict(sample_flower)[0]
+predicted_name = target_names[predicted_class]
+actual_name = target_names[y_test.iloc[0]]
+print(f"\nPrzykład predykcji:")
+print(f"Przewidywana klasa: {predicted_name}")
+print(f"Rzeczywista klasa: {actual_name}")
+print("✅ Poprawnie!" if predicted_name == actual_name else "❌ Błąd")
+```
+
+---
+
+## 💡 Najważniejsze biblioteki Python dla ML
+
+```python
+# Podstawowe przetwarzanie danych
+import pandas as pd      # DataFrames, CSV, analiza
+import numpy as np       # obliczenia numeryczne
+
+# Machine Learning
+from sklearn import *    # algorytmy ML, preprocessing, metryki
+import xgboost as xgb   # zaawansowane drzewa decyzyjne
+
+# Wizualizacja
+import matplotlib.pyplot as plt  # wykresy
+import seaborn as sns           # piękne wykresy statystyczne
+
+# Deep Learning
+import tensorflow as tf  # sieci neuronowe (Google)
+import torch            # sieci neuronowe (Facebook)
+```
+
+---
+
+::: {.callout-tip}
+## 🎯 Pro tips dla początkujących
+
+1. **Zacznij od prostych algorytmów** - Linear Regression, Decision Trees
+2. **80% czasu to przygotowanie danych** - czyszczenie, eksploracja, feature engineering
+3. **Zawsze sprawdź czy model nie jest overfitted** - użyj validation set
+4. **Rozumiej swoje dane** przed wyborem algorytmu
+5. **Praktyka > teoria** - rób dużo projektów na różnych danych!
+:::
+
+**Następna ściągawka:** [Linear Regression w praktyce](02-linear-regression.qmd) 🚀

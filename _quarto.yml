@@ -1,0 +1,43 @@
+project:
+  type: website
+  output-dir: docs
+  resources: ["requirements.txt"]
+  render:
+    - "*.qmd"
+    - "!LIVE_CODE_SETUP.md"
+
+website:
+  title: "ML Cheatsheets"
+  repo-url: https://github.com/kasjansmigielski/ml-cheatsheets
+  repo-branch: main
+  navbar:
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "ML Cheatsheets"
+        menu:
+          - text: "Wprowadzenie do ML"
+            href: cheatsheets/01-intro-ml.qmd
+          - text: "Linear Regression"
+            href: cheatsheets/02-linear-regression.qmd
+          - text: "Decision Trees"
+            href: cheatsheets/03-decision-trees.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-copy: true
+    code-overflow: wrap
+    css: styles.css
+    code-tools: true
+    code-fold: false
+    code-summary: "Pokaż kod"
+    code-line-numbers: false
+
+
+execute:
+  echo: true
+  warning: false
+  message: false
+  freeze: auto

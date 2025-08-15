@@ -1,0 +1,351 @@
+---
+title: "Linear Regression — przewiduj wartości liczbowe"
+format:
+  html:
+    code-tools: true
+---
+
+## 📈 Czym jest Linear Regression?
+
+**Linear Regression** to jeden z najprostszych i najczęściej używanych algorytmów ML do **przewidywania wartości liczbowych** (np. ceny, temperatury, sprzedaży). Szuka najlepszej linii prostej, która opisuje zależność między zmiennymi.
+
+::: {.callout-note}
+## 💡 Intuicja matematyczna
+Szukamy takiej linii `y = ax + b`, która najlepiej "przechodzi" przez nasze punkty danych. Algorytm automatycznie dobiera optymalne wartości `a` (slope) i `b` (intercept).
+:::
+
+---
+
+## 🏠 Praktyczny przykład: predykcja cen mieszkań
+
+```{python}
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error, r2_score
+import matplotlib.pyplot as plt
+
+# Tworzenie przykładowych danych mieszkań
+np.random.seed(42)
+n_mieszkan = 1000
+
+data = pd.DataFrame({
+    'powierzchnia': np.random.normal(70, 25, n_mieszkan),
+    'liczba_pokoi': np.random.randint(1, 5, n_mieszkan),
+    'wiek_budynku': np.random.randint(0, 50, n_mieszkan),
+    'odleglosc_centrum': np.random.exponential(5, n_mieszkan)
+})
+
+# Realistyczna formuła ceny (z szumem)
+data['cena'] = (
+    data['powierzchnia'] * 8000 +           # 8k za m²
+    data['liczba_pokoi'] * 15000 +          # 15k za pokój
+    (50 - data['wiek_budynku']) * 2000 +    # starsze = tańsze
+    data['odleglosc_centrum'] * (-3000) +   # dalej = tańsze
+    np.random.normal(0, 50000, n_mieszkan)  # szum losowy
+)
+
+print("Podstawowe statystyki:")
+print(data.describe())
+```
+
+---
+
+## 🔧 Trenowanie modelu krok po kroku
+
+### 1) Przygotowanie danych
+
+```{python}
+# Sprawdzenie korelacji - które zmienne są najważniejsze?
+correlation = data.corr()['cena'].sort_values(ascending=False)
+print("Korelacja z ceną:")
+print(correlation)
+
+# Podział na features (X) i target (y)
+X = data[['powierzchnia', 'liczba_pokoi', 'wiek_budynku', 'odleglosc_centrum']]
+y = data['cena']
+
+# Podział train/test (80/20)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+print(f"Dane treningowe: {X_train.shape[0]} mieszkań")
+print(f"Dane testowe: {X_test.shape[0]} mieszkań")
+```
+
+### 2) Trenowanie modelu
+
+```{python}
+# U}tworzenie i trenowanie modelu
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Sprawdzenie współczynników
+print("Współczynniki modelu:")
+for feature, coef in zip(X.columns, model.coef_):
+    print(f"{feature}: {coef:.0f} zł")
+print(f"Intercept (stała): {model.intercept_:.0f} zł")
+```
+
+### 3) Ewaluacja wyników
+
+```{python}
+# Predykcje na zbiorze testowym
+y_pred = model.predict(X_test)
+
+# Metryki
+mae = mean_absolute_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"\nWyniki modelu:")
+print(f"Mean Absolute Error: {mae:.0f} zł")
+print(f"R² Score: {r2:.3f}")
+print(f"Średni błąd to {mae/data['cena'].mean()*100:.1f}% ceny mieszkania")
+
+# Przykładowe predykcje
+for i in range(5):
+    rzeczywista = y_test.iloc[i]
+    przewidywana = y_pred[i]
+    błąd = abs(rzeczywista - przewidywana)
+    print(f"Mieszkanie {i+1}: rzeczywista={rzeczywista:.0f}zł, "
+          f"przewidywana={przewidywana:.0f}zł, błąd={błąd:.0f}zł")
+```
+
+---
+
+## 📊 Wizualizacja wyników
+
+```{python}
+#| label: fig-regression-analysis
+#| fig-cap: "Analiza wyników modelu Linear Regression"
+#| fig-width: 10
+#| fig-height: 6
+#| warning: false
+
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error, r2_score
+import matplotlib.pyplot as plt
+
+# Przykładowe dane mieszkań (powtarzamy dla demonstracji)
+np.random.seed(42)
+n_mieszkan = 1000
+
+data = pd.DataFrame({
+    'powierzchnia': np.random.normal(70, 25, n_mieszkan),
+    'liczba_pokoi': np.random.randint(1, 5, n_mieszkan),
+    'wiek_budynku': np.random.randint(0, 50, n_mieszkan),
+    'odleglosc_centrum': np.random.exponential(5, n_mieszkan)
+})
+
+data['cena'] = (
+    data['powierzchnia'] * 8000 +
+    data['liczba_pokoi'] * 15000 +
+    (50 - data['wiek_budynku']) * 2000 +
+    data['odleglosc_centrum'] * (-3000) +
+    np.random.normal(0, 50000, n_mieszkan)
+)
+
+# Przygotowanie i trenowanie modelu
+X = data[['powierzchnia', 'liczba_pokoi', 'wiek_budynku', 'odleglosc_centrum']]
+y = data['cena']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+# Wykres: rzeczywiste vs przewidywane ceny
+plt.figure(figsize=(10, 6))
+
+plt.subplot(1, 2, 1)
+plt.scatter(y_test, y_pred, alpha=0.6)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+plt.xlabel('Rzeczywiste ceny')
+plt.ylabel('Przewidywane ceny')
+plt.title('Rzeczywiste vs Przewidywane')
+
+plt.subplot(1, 2, 2)
+residuals = y_test - y_pred
+plt.scatter(y_pred, residuals, alpha=0.6)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.xlabel('Przewidywane ceny')
+plt.ylabel('Residuals (błędy)')
+plt.title('Analiza residuals')
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## 🎯 Praktyczne zastosowania Linear Regression
+
+### 1) **Biznesowe**
+```{python}
+# Przewidywanie sprzedaży na podstawie budżetu marketingowego
+sales_data = pd.DataFrame({
+    'marketing_budget': [10000, 15000, 20000, 25000, 30000],
+    'sales': [100000, 140000, 180000, 220000, 260000]
+})
+
+model_sales = LinearRegression()
+model_sales.fit(sales_data[['marketing_budget']], sales_data['sales'])
+
+# "Jeśli zwiększę budżet do 35k, sprzedaż wzrośnie do:"
+new_sales = model_sales.predict([[35000]])
+print(f"Przewidywana sprzedaż przy budżecie 35k: {new_sales[0]:.0f}")
+```
+
+### 2) **Analizy finansowe**
+```{python}
+# Relacja między PKB a konsumpcją
+economics_data = pd.DataFrame({
+    'pkb_per_capita': [25000, 30000, 35000, 40000, 45000],
+    'konsumpcja': [18000, 21000, 24000, 27000, 30000]
+})
+
+model_econ = LinearRegression()
+model_econ.fit(economics_data[['pkb_per_capita']], economics_data['konsumpcja'])
+
+# Współczynnik skłonności do konsumpcji
+print(f"Na każde dodatkowe 1000zł PKB, konsumpcja rośnie o: {model_econ.coef_[0]:.0f}zł")
+```
+
+---
+
+## ⚠️ Najczęstsze pułapki i jak ich unikać
+
+### 1) **Overfitting z wieloma zmiennymi**
+```{python}
+# ZŁO: za dużo features względem danych
+# Jeśli masz 100 mieszkań, nie używaj 50 features!
+
+# DOBRZE: zasada kciuka
+def check_features_ratio(X, y):
+    ratio = len(y) / X.shape[1]
+    if ratio < 10:
+        print(f"⚠️ Uwaga: masz tylko {ratio:.1f} obserwacji na feature!")
+        print("Rozważ: więcej danych lub mniej features")
+    else:
+        print(f"✅ OK: {ratio:.1f} obserwacji na feature")
+
+check_features_ratio(X_train, y_train)
+```
+
+### 2) **Sprawdzanie założeń linearności**
+```{python}
+# Sprawdź czy zależności są rzeczywiście liniowe
+from scipy import stats
+
+for col in X.columns:
+    correlation, p_value = stats.pearsonr(data[col], data['cena'])
+    print(f"{col}: korelacja={correlation:.3f}, p-value={p_value:.3f}")
+    
+    if abs(correlation) < 0.1:
+        print(f"⚠️ {col} ma słabą korelację - może nie być przydatna")
+```
+
+### 3) **Wielokoliniowość** (features korelują między sobą)
+
+```{python}
+#| label: fig-correlation-heatmap  
+#| fig-cap: "Mapa korelacji między zmiennymi"
+#| fig-width: 8
+#| fig-height: 6
+#| warning: false
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Przykładowe dane features (demonstracja)
+np.random.seed(42)
+n_samples = 1000
+
+X = pd.DataFrame({
+    'powierzchnia': np.random.normal(70, 25, n_samples),
+    'liczba_pokoi': np.random.randint(1, 5, n_samples),
+    'wiek_budynku': np.random.randint(0, 50, n_samples),
+    'odleglosc_centrum': np.random.exponential(5, n_samples)
+})
+
+# Sprawdź korelacje między features
+plt.figure(figsize=(8, 6))
+correlation_matrix = X.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
+plt.title('Korelacje między features')
+plt.show()
+
+# Jeśli korelacja między features > 0.8, usuń jedną z nich!
+```
+
+---
+
+## 🔧 Parametry do tuningu
+
+```{python}
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
+from sklearn.pipeline import Pipeline
+
+# 1) Standardization - gdy features mają różne skale
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_train)
+
+# 2) Polynomial Features - dla nieliniowych zależności
+poly_model = Pipeline([
+    ('poly', PolynomialFeatures(degree=2)),
+    ('linear', LinearRegression())
+])
+poly_model.fit(X_train, y_train)
+
+poly_pred = poly_model.predict(X_test)
+poly_r2 = r2_score(y_test, poly_pred)
+print(f"Polynomial Regression R²: {poly_r2:.3f}")
+
+# 3) Regularization - Ridge i Lasso
+from sklearn.linear_model import Ridge, Lasso
+
+ridge = Ridge(alpha=1.0)
+ridge.fit(X_train, y_train)
+ridge_r2 = r2_score(y_test, ridge.predict(X_test))
+
+lasso = Lasso(alpha=1.0)
+lasso.fit(X_train, y_train)
+lasso_r2 = r2_score(y_test, lasso.predict(X_test))
+
+print(f"Ridge R²: {ridge_r2:.3f}")
+print(f"Lasso R²: {lasso_r2:.3f}")
+```
+
+---
+
+## 🌍 Real-world przykłady zastosowań
+
+1. **E-commerce:** Przewidywanie wartości życiowej klienta (LTV)
+2. **Nieruchomości:** Automatyczna wycena domów (Zillow)
+3. **Finanse:** Scoring kredytowy, przewidywanie cen akcji
+4. **Marketing:** ROI kampanii reklamowych
+5. **Supply Chain:** Prognozowanie popytu na produkty
+
+::: {.callout-tip}
+## 💡 Kiedy używać Linear Regression?
+
+**✅ UŻYJ GDY:**
+- Przewidujesz wartości liczbowe (continuous target)
+- Zależności wydają się liniowe
+- Chcesz interpretowalny model
+- Masz stosunkowo mało features
+
+**❌ NIE UŻYWAJ GDY:**
+- Target jest kategoryczny (użyj klasyfikacji)
+- Zależności są bardzo nieliniowe (użyj Random Forest, XGBoost)
+- Masz tysiące features (użyj regularization)
+:::
+
+**Następna ściągawka:** [Decision Trees - klasyfikacja](03-decision-trees.qmd) 🌳

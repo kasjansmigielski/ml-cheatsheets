@@ -1,0 +1,446 @@
+---
+title: "Decision Trees — proste drzewa decyzyjne"
+format:
+  html:
+    code-tools: true
+---
+
+## 🌳 Czym są Decision Trees?
+
+**Decision Trees** to jeden z najbardziej intuicyjnych algorytmów ML, który **podejmuje decyzje jak człowiek** - zadając szereg pytań typu "tak/nie" i na podstawie odpowiedzi klasyfikuje lub przewiduje wartości.
+
+::: {.callout-note}
+## 💡 Intuicja
+Wyobraź sobie lekarza, który diagnozuje chorobę: "Czy ma gorączkę? TAK → Czy boli gardło? TAK → Czy ma katar? NIE → Prawdopodobnie angina". Decision Tree działa dokładnie tak samo!
+:::
+
+---
+
+## 🎯 Praktyczny przykład: klasyfikacja klientów banku
+
+Czy klient weźmie kredyt na podstawie jego profilu?
+
+```{python}
+import pandas as pd
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn import tree
+import matplotlib.pyplot as plt
+
+# Tworzenie realistycznych danych klientów banku
+np.random.seed(42)
+n_clients = 2000
+
+data = pd.DataFrame({
+    'wiek': np.random.randint(18, 70, n_clients),
+    'dochod': np.random.lognormal(10, 0.5, n_clients),  # log-normal dla dochodów
+    'historia_kredytowa': np.random.choice(['dobra', 'średnia', 'słaba'], n_clients, p=[0.6, 0.3, 0.1]),
+    'zatrudnienie': np.random.choice(['stałe', 'tymczasowe', 'bezrobotny'], n_clients, p=[0.7, 0.25, 0.05]),
+    'oszczednosci': np.random.exponential(20000, n_clients),
+    'liczba_dzieci': np.random.randint(0, 4, n_clients)
+})
+
+# Realistyczna logika decyzyjna banku
+def czy_kredyt(row):
+    score = 0
+    
+    # Wiek (30-50 lat = najlepsi klienci)
+    if 30 <= row['wiek'] <= 50:
+        score += 2
+    elif row['wiek'] < 25 or row['wiek'] > 60:
+        score -= 1
+    
+    # Dochód
+    if row['dochod'] > 50000:
+        score += 3
+    elif row['dochod'] > 30000:
+        score += 1
+    else:
+        score -= 2
+    
+    # Historia kredytowa
+    if row['historia_kredytowa'] == 'dobra':
+        score += 2
+    elif row['historia_kredytowa'] == 'słaba':
+        score -= 3
+    
+    # Zatrudnienie
+    if row['zatrudnienie'] == 'stałe':
+        score += 2
+    elif row['zatrudnienie'] == 'bezrobotny':
+        score -= 4
+    
+    # Oszczędności
+    if row['oszczednosci'] > 50000:
+        score += 1
+    
+    # Dzieci (więcej dzieci = większe ryzyko)
+    score -= row['liczba_dzieci'] * 0.5
+    
+    # Końcowa decyzja z odrobiną losowości
+    probability = 1 / (1 + np.exp(-score + np.random.normal(0, 0.5)))
+    return probability > 0.5
+
+data['kredyt_przyznany'] = data.apply(czy_kredyt, axis=1)
+
+print("Statystyki klientów:")
+print(data.describe())
+print(f"\nOdsetek przyznanych kredytów: {data['kredyt_przyznany'].mean():.1%}")
+```
+
+---
+
+## 🔧 Budowanie modelu krok po kroku
+
+### 1) Przygotowanie danych
+
+```{python}
+# Encoding kategorycznych zmiennych
+from sklearn.preprocessing import LabelEncoder
+
+data_encoded = data.copy()
+le_historia = LabelEncoder()
+le_zatrudnienie = LabelEncoder()
+
+data_encoded['historia_kredytowa_num'] = le_historia.fit_transform(data['historia_kredytowa'])
+data_encoded['zatrudnienie_num'] = le_zatrudnienie.fit_transform(data['zatrudnienie'])
+
+# Features do modelu
+feature_columns = ['wiek', 'dochod', 'historia_kredytowa_num', 'zatrudnienie_num', 'oszczednosci', 'liczba_dzieci']
+X = data_encoded[feature_columns]
+y = data_encoded['kredyt_przyznany']
+
+# Podział train/test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+print(f"Dane treningowe: {len(X_train)} klientów")
+print(f"Dane testowe: {len(X_test)} klientów")
+```
+
+### 2) Trenowanie Decision Tree
+
+```{python}
+# Tworzenie modelu z ograniczeniami (żeby nie był za głęboki)
+dt_model = DecisionTreeClassifier(
+    max_depth=5,        # maksymalna głębokość drzewa
+    min_samples_split=50,  # min. próbek do podziału węzła
+    min_samples_leaf=20,   # min. próbek w liściu
+    random_state=42
+)
+
+# Trenowanie
+dt_model.fit(X_train, y_train)
+
+print("Model wytrenowany!")
+print(f"Głębokość drzewa: {dt_model.tree_.max_depth}")
+print(f"Liczba liści: {dt_model.tree_.n_leaves}")
+```
+
+### 3) Ewaluacja modelu
+
+```{python}
+# Predykcje
+y_pred = dt_model.predict(X_test)
+y_pred_proba = dt_model.predict_proba(X_test)[:, 1]
+
+# Metryki
+accuracy = accuracy_score(y_test, y_pred)
+print(f"\nDokładność modelu: {accuracy:.1%}")
+
+# Szczegółowy raport
+print("\nRaport klasyfikacji:")
+print(classification_report(y_test, y_pred))
+
+# Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+print("\nConfusion Matrix:")
+print("Przewidywane:    Nie    Tak")
+print(f"Rzeczywiste Nie: {cm[0,0]:3d}   {cm[0,1]:3d}")
+print(f"Rzeczywiste Tak: {cm[1,0]:3d}   {cm[1,1]:3d}")
+```
+
+---
+
+## 🎨 Wizualizacja drzewa decyzyjnego
+
+```{python}
+#| label: fig-decision-tree
+#| fig-cap: "Wizualizacja drzewa decyzyjnego dla kredytów"
+#| fig-width: 20
+#| fig-height: 10
+#| warning: false
+
+import pandas as pd
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn import tree
+import matplotlib.pyplot as plt
+
+# Tworzenie przykładowych danych (kompletny przykład)
+np.random.seed(42)
+n_clients = 2000
+
+data = pd.DataFrame({
+    'wiek': np.random.randint(18, 70, n_clients),
+    'dochod': np.random.lognormal(10, 0.5, n_clients),
+    'historia_kredytowa': np.random.choice(['dobra', 'średnia', 'słaba'], n_clients, p=[0.6, 0.3, 0.1]),
+    'zatrudnienie': np.random.choice(['stałe', 'tymczasowe', 'bezrobotny'], n_clients, p=[0.7, 0.25, 0.05]),
+    'oszczednosci': np.random.exponential(20000, n_clients),
+    'liczba_dzieci': np.random.randint(0, 4, n_clients)
+})
+
+# Prosta logika przyznawania kredytu
+def czy_kredyt(row):
+    score = 0
+    if 30 <= row['wiek'] <= 50:
+        score += 2
+    if row['dochod'] > 50000:
+        score += 3
+    if row['historia_kredytowa'] == 'dobra':
+        score += 2
+    if row['zatrudnienie'] == 'stałe':
+        score += 2
+    if row['oszczednosci'] > 50000:
+        score += 1
+    score -= row['liczba_dzieci'] * 0.5
+    probability = 1 / (1 + np.exp(-score + np.random.normal(0, 0.5)))
+    return probability > 0.5
+
+data['kredyt_przyznany'] = data.apply(czy_kredyt, axis=1)
+
+# Encoding i model
+data_encoded = data.copy()
+le_historia = LabelEncoder()
+le_zatrudnienie = LabelEncoder()
+data_encoded['historia_kredytowa_num'] = le_historia.fit_transform(data['historia_kredytowa'])
+data_encoded['zatrudnienie_num'] = le_zatrudnienie.fit_transform(data['zatrudnienie'])
+
+feature_columns = ['wiek', 'dochod', 'historia_kredytowa_num', 'zatrudnienie_num', 'oszczednosci', 'liczba_dzieci']
+X = data_encoded[feature_columns]
+y = data_encoded['kredyt_przyznany']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Trenowanie drzewa
+dt_model = DecisionTreeClassifier(max_depth=5, min_samples_split=50, min_samples_leaf=20, random_state=42)
+dt_model.fit(X_train, y_train)
+
+# Wizualizacja drzewa (uproszczona)
+plt.figure(figsize=(20, 10))
+
+# Nazwy features dla lepszej czytelności
+feature_names = ['wiek', 'dochód', 'historia_kred.', 'zatrudnienie', 'oszczędności', 'liczba_dzieci']
+
+tree.plot_tree(dt_model, 
+               feature_names=feature_names,
+               class_names=['Nie', 'Tak'],
+               filled=True,
+               rounded=True,
+               fontsize=10)
+
+plt.title("Drzewo decyzyjne - Przyznanie kredytu")
+plt.show()
+
+# Ważność features
+importance = dt_model.feature_importances_
+feature_importance = pd.DataFrame({
+    'feature': feature_names,
+    'importance': importance
+}).sort_values('importance', ascending=False)
+
+print("\nWażność cech:")
+for _, row in feature_importance.iterrows():
+    print(f"{row['feature']}: {row['importance']:.3f}")
+```
+
+---
+
+## 🔍 Interpretacja decyzji dla konkretnego klienta
+
+```{python}
+# Funkcja do interpretacji ścieżki decyzyjnej
+def explain_decision(model, X_sample, feature_names):
+    # Pobierz ścieżkę w drzewie
+    leaf_id = model.decision_path(X_sample.reshape(1, -1)).toarray()[0]
+    feature = model.tree_.feature
+    threshold = model.tree_.threshold
+    
+    print("Ścieżka decyzyjna:")
+    for node_id in range(len(leaf_id)):
+        if leaf_id[node_id] == 1:  # jeśli węzeł jest na ścieżce
+            if feature[node_id] != -2:  # jeśli nie jest liściem
+                feature_name = feature_names[feature[node_id]]
+                threshold_val = threshold[node_id]
+                feature_val = X_sample[feature[node_id]]
+                
+                if feature_val <= threshold_val:
+                    condition = "<="
+                else:
+                    condition = ">"
+                    
+                print(f"  {feature_name} ({feature_val:.0f}) {condition} {threshold_val:.0f}")
+
+# Przykład dla konkretnego klienta
+sample_client = X_test.iloc[0]
+prediction = dt_model.predict([sample_client])[0]
+probability = dt_model.predict_proba([sample_client])[0]
+
+print(f"Klient testowy:")
+print(f"Wiek: {sample_client['wiek']}")
+print(f"Dochód: {sample_client['dochod']:.0f}")
+print(f"Oszczędności: {sample_client['oszczednosci']:.0f}")
+print(f"\nDecyzja: {'KREDYT PRZYZNANY' if prediction else 'KREDYT ODRZUCONY'}")
+print(f"Prawdopodobieństwo: {probability[1]:.1%}")
+
+explain_decision(dt_model, sample_client.values, feature_names)
+```
+
+---
+
+## 🎯 Różne zastosowania Decision Trees
+
+### 1) **Medyczna diagnoza**
+```{python}
+# Przykład klasyfikacji ryzyka chorób serca
+medical_features = ['wiek', 'cholesterol', 'ciśnienie', 'BMI', 'pali_papierosy']
+# Target: 'ryzyko_chorób_serca' (wysokie/niskie)
+
+medical_tree = DecisionTreeClassifier(max_depth=4)
+# Model automatycznie znajdzie progi: "Jeśli cholesterol > 240 I BMI > 30 ORAZ wiek > 50..."
+```
+
+### 2) **Marketing - segmentacja klientów**
+```{python}
+# Przewidywanie czy klient kupi produkt premium
+marketing_features = ['dochód_roczny', 'wiek', 'wykształcenie', 'poprzednie_zakupy']
+# Target: 'kupi_premium' (tak/nie)
+
+marketing_tree = DecisionTreeClassifier(max_depth=3, min_samples_leaf=100)
+# Wynik: jasne reguły marketingowe do targetowania reklam
+```
+
+### 3) **HR - decyzje o zatrudnieniu**
+```{python}
+# Przewidywanie sukcesu kandydata w rekrutacji
+hr_features = ['doświadczenie_lat', 'wykształcenie', 'wynik_testów', 'referencje']
+# Target: 'zatrudniony' (tak/nie)
+
+hr_tree = DecisionTreeClassifier(max_depth=5)
+# Wynik: automatyczne zasady rekrutacyjne
+```
+
+---
+
+## ⚙️ Tuning parametrów
+
+```{python}
+from sklearn.model_selection import GridSearchCV
+
+# Najważniejsze parametry do tuningu
+param_grid = {
+    'max_depth': [3, 5, 7, 10, None],
+    'min_samples_split': [20, 50, 100],
+    'min_samples_leaf': [10, 20, 50],
+    'criterion': ['gini', 'entropy']
+}
+
+# Grid search z cross-validation
+grid_search = GridSearchCV(
+    DecisionTreeClassifier(random_state=42),
+    param_grid,
+    cv=5,
+    scoring='accuracy',
+    n_jobs=-1
+)
+
+grid_search.fit(X_train, y_train)
+
+print("Najlepsze parametry:")
+print(grid_search.best_params_)
+print(f"Najlepsza dokładność CV: {grid_search.best_score_:.1%}")
+
+# Model z najlepszymi parametrami
+best_model = grid_search.best_estimator_
+best_accuracy = accuracy_score(y_test, best_model.predict(X_test))
+print(f"Dokładność na test set: {best_accuracy:.1%}")
+```
+
+---
+
+## ⚠️ Problemy i rozwiązania
+
+### 1) **Overfitting - drzewo za głębokie**
+```{python}
+# Problem: drzewo "pamięta" dane treningowe
+overfitted_tree = DecisionTreeClassifier()  # bez ograniczeń!
+overfitted_tree.fit(X_train, y_train)
+
+train_acc = accuracy_score(y_train, overfitted_tree.predict(X_train))
+test_acc = accuracy_score(y_test, overfitted_tree.predict(X_test))
+
+print(f"Overfitted model:")
+print(f"Train accuracy: {train_acc:.1%}")
+print(f"Test accuracy: {test_acc:.1%}")
+print(f"Różnica: {train_acc - test_acc:.1%} - to overfitting!")
+
+# Rozwiązanie: ograniczenia
+pruned_tree = DecisionTreeClassifier(max_depth=5, min_samples_leaf=20)
+pruned_tree.fit(X_train, y_train)
+
+train_acc_pruned = accuracy_score(y_train, pruned_tree.predict(X_train))
+test_acc_pruned = accuracy_score(y_test, pruned_tree.predict(X_test))
+
+print(f"\nPruned model:")
+print(f"Train accuracy: {train_acc_pruned:.1%}")
+print(f"Test accuracy: {test_acc_pruned:.1%}")
+print(f"Różnica: {train_acc_pruned - test_acc_pruned:.1%} - znacznie lepiej!")
+```
+
+### 2) **Brak stabilności - małe zmiany = różne drzewa**
+```{python}
+# Problem demonstracji
+results = []
+for i in range(10):
+    # Różne random_state = różne drzewa
+    tree_test = DecisionTreeClassifier(random_state=i, max_depth=5)
+    tree_test.fit(X_train, y_train)
+    acc = accuracy_score(y_test, tree_test.predict(X_test))
+    results.append(acc)
+
+print(f"Dokładność różnych drzew: {min(results):.1%} - {max(results):.1%}")
+print(f"Rozrzut: {max(results) - min(results):.1%}")
+print("Rozwiązanie: Random Forest (następna ściągawka!)")
+```
+
+---
+
+## 🌍 Real-world przypadki użycia
+
+1. **Bankowość:** Ocena ryzyka kredytowego, wykrywanie fraudów
+2. **Medycyna:** Systemy wspomagania diagnostyki, triage pacjentów  
+3. **E-commerce:** Rekomendacje produktów, ustalanie cen dynamicznych
+4. **HR:** Automatyzacja procesów rekrutacyjnych
+5. **Marketing:** Segmentacja klientów, personalizacja oferowania
+
+::: {.callout-tip}
+## 💡 Kiedy używać Decision Trees?
+
+**✅ UŻYJ GDY:**
+- Potrzebujesz interpretowalnego modelu
+- Dane mają kategoryczne zmienne  
+- Chcesz zrozumieć "dlaczego" model podjął decyzję
+- Masz nieliniowe zależności w danych
+- Braków w danych nie trzeba impute'ować
+
+**❌ NIE UŻYWAJ GDY:**
+- Potrzebujesz najwyższej dokładności (użyj Random Forest/XGBoost)
+- Masz bardzo głębokie wzorce w danych (użyj Neural Networks)
+- Dane są bardzo hałaśliwe
+- Przewidujesz wartości ciągłe (lepiej Linear Regression)
+:::
+
+**Następna ściągawka:** Random Forest - zespół drzew! 🌲🌲🌲
