@@ -1,0 +1,867 @@
+---
+title: "K-Means — grupowanie klientów bez etykiet"
+format:
+  html:
+    code-tools: true
+---
+
+## 🎯 Czym jest K-Means?
+
+**K-Means** to algorytm **uczenia nienadzorowanego**, który automatycznie **grupuje podobne dane** w klastry. Nie potrzebujesz etykiet - algorytm sam znajduje wzorce i dzieli dane na K grup.
+
+::: {.callout-note}
+## 💡 Intuicja
+Wyobraź sobie imprezę, gdzie ludzie sami grupują się w kręgi na podstawie wspólnych zainteresowań. K-Means działa podobnie - znajduje "centra grup" i przydziela każdy punkt do najbliższego centrum.
+:::
+
+---
+
+## 🛍️ Praktyczny przykład: segmentacja klientów sklepu
+
+Jak pogrupować klientów do targetowanych kampanii marketingowych?
+
+```{python}
+#| echo: true
+#| output: false
+
+import pandas as pd
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Tworzenie realistycznych danych klientów e-commerce
+np.random.seed(42)
+n_customers = 1000
+
+# Generujemy różne typy klientów z wyraźnymi wzorcami
+customer_types = np.random.choice(['premium', 'average', 'bargain', 'sporadic'], n_customers, 
+                                 p=[0.15, 0.35, 0.35, 0.15])
+
+data = pd.DataFrame({
+    'wiek': np.random.randint(18, 70, n_customers),
+    'roczny_dochod': np.random.normal(50000, 20000, n_customers),
+    'wydatki_roczne': np.random.normal(25000, 15000, n_customers),
+    'liczba_zakupow': np.random.randint(1, 50, n_customers),
+    'sredni_koszt_zakupu': np.random.normal(200, 100, n_customers),
+    'lata_jako_klient': np.random.randint(0, 10, n_customers),
+    'typ_klienta': customer_types
+})
+
+# Realistyczne korelacje między zmiennymi
+for i, typ in enumerate(data['typ_klienta']):
+    if typ == 'premium':
+        data.loc[i, 'roczny_dochod'] = np.random.normal(80000, 15000)
+        data.loc[i, 'wydatki_roczne'] = np.random.normal(45000, 10000)
+        data.loc[i, 'liczba_zakupow'] = np.random.randint(20, 50)
+        data.loc[i, 'sredni_koszt_zakupu'] = np.random.normal(400, 100)
+    elif typ == 'bargain':
+        data.loc[i, 'roczny_dochod'] = np.random.normal(30000, 10000)
+        data.loc[i, 'wydatki_roczne'] = np.random.normal(8000, 3000)
+        data.loc[i, 'liczba_zakupow'] = np.random.randint(15, 40)
+        data.loc[i, 'sredni_koszt_zakupu'] = np.random.normal(80, 30)
+    elif typ == 'sporadic':
+        data.loc[i, 'roczny_dochod'] = np.random.normal(45000, 15000)
+        data.loc[i, 'wydatki_roczne'] = np.random.normal(5000, 2000)
+        data.loc[i, 'liczba_zakupow'] = np.random.randint(1, 8)
+        data.loc[i, 'sredni_koszt_zakupu'] = np.random.normal(300, 150)
+
+# Czyść dane - usuń wartości ujemne
+data['roczny_dochod'] = np.maximum(data['roczny_dochod'], 15000)
+data['wydatki_roczne'] = np.maximum(data['wydatki_roczne'], 1000)
+data['sredni_koszt_zakupu'] = np.maximum(data['sredni_koszt_zakupu'], 20)
+
+print("Statystyki klientów:")
+print(data[['wiek', 'roczny_dochod', 'wydatki_roczne', 'liczba_zakupow', 'sredni_koszt_zakupu']].describe())
+print(f"\nRozkład typów klientów:")
+print(data['typ_klienta'].value_counts())
+```
+
+::: {.callout-note collapse="true"}
+## Pokaż statystyki klientów
+
+```{python}
+#| echo: false
+
+print("Statystyki klientów:")
+print(data[['wiek', 'roczny_dochod', 'wydatki_roczne', 'liczba_zakupow', 'sredni_koszt_zakupu']].describe())
+print(f"\nRozkład typów klientów:")
+print(data['typ_klienta'].value_counts())
+```
+:::
+
+---
+
+## 🔧 Budowanie modelu krok po kroku
+
+### 1) Przygotowanie danych
+
+```{python}
+#| echo: true
+#| output: false
+
+# Wybierz features do clusteringu (bez typ_klienta - to chcemy odkryć!)
+features = ['wiek', 'roczny_dochod', 'wydatki_roczne', 'liczba_zakupow', 
+           'sredni_koszt_zakupu', 'lata_jako_klient']
+X = data[features]
+
+# Standaryzacja - BARDZO WAŻNE w K-Means!
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+print("Przed standaryzacją:")
+print(X.describe())
+
+print("\nPo standaryzacji (pierwsze 5 wierszy):")
+X_scaled_df = pd.DataFrame(X_scaled, columns=features)
+print(X_scaled_df.head())
+print("\nŚrednie po standaryzacji:", X_scaled_df.mean().round(3))
+print("Odchylenia po standaryzacji:", X_scaled_df.std().round(3))
+```
+
+::: {.callout-note collapse="true"}
+## Pokaż wyniki standaryzacji
+
+```{python}
+#| echo: false
+
+print("Przed standaryzacją:")
+print(X.describe())
+
+print("\nPo standaryzacji (pierwsze 5 wierszy):")
+X_scaled_df = pd.DataFrame(X_scaled, columns=features)
+print(X_scaled_df.head())
+print("\nŚrednie po standaryzacji:", X_scaled_df.mean().round(3))
+print("Odchylenia po standaryzacji:", X_scaled_df.std().round(3))
+```
+:::
+
+### 2) Znajdowanie optymalnej liczby klastrów
+
+```{python}
+#| echo: true
+#| output: false
+
+# Metoda łokcia (Elbow Method)
+inertias = []
+silhouette_scores = []
+K_range = range(2, 11)
+
+for k in K_range:
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+    kmeans.fit(X_scaled)
+    inertias.append(kmeans.inertia_)
+    silhouette_scores.append(silhouette_score(X_scaled, kmeans.labels_))
+
+# Znajdź optymalne K
+best_k = K_range[np.argmax(silhouette_scores)]
+print(f"Optymalna liczba klastrów (Silhouette): {best_k}")
+
+print("\nWyniki dla różnych K:")
+for k, inertia, sil_score in zip(K_range, inertias, silhouette_scores):
+    print(f"K={k}: Inertia={inertia:.0f}, Silhouette={sil_score:.3f}")
+```
+
+::: {.callout-note collapse="true"}
+## Pokaż optymalne K
+
+```{python}
+#| echo: false
+
+print(f"Optymalna liczba klastrów (Silhouette): {best_k}")
+
+print("\nWyniki dla różnych K:")
+for k, inertia, sil_score in zip(K_range, inertias, silhouette_scores):
+    print(f"K={k}: Inertia={inertia:.0f}, Silhouette={sil_score:.3f}")
+```
+:::
+
+### 3) Trenowanie finalnego modelu
+
+```{python}
+#| echo: true
+#| output: false
+
+# Trenuj model z optymalnym K
+final_kmeans = KMeans(n_clusters=best_k, random_state=42, n_init=10)
+cluster_labels = final_kmeans.fit_predict(X_scaled)
+
+# Dodaj etykiety klastrów do danych
+data['klaster'] = cluster_labels
+
+print(f"Model K-Means wytrenowany z K={best_k}")
+print(f"Silhouette Score: {silhouette_score(X_scaled, cluster_labels):.3f}")
+
+# Analiza klastrów
+print("\nRozmiary klastrów:")
+cluster_counts = pd.Series(cluster_labels).value_counts().sort_index()
+for i, count in enumerate(cluster_counts):
+    print(f"Klaster {i}: {count} klientów ({count/len(data)*100:.1f}%)")
+```
+
+::: {.callout-note collapse="true"}
+## Pokaż wyniki finalnego modelu
+
+```{python}
+#| echo: false
+
+print(f"Model K-Means wytrenowany z K={best_k}")
+print(f"Silhouette Score: {silhouette_score(X_scaled, cluster_labels):.3f}")
+
+print("\nRozmiary klastrów:")
+cluster_counts = pd.Series(cluster_labels).value_counts().sort_index()
+for i, count in enumerate(cluster_counts):
+    print(f"Klaster {i}: {count} klientów ({count/len(data)*100:.1f}%)")
+```
+:::
+
+---
+
+## 📊 Analiza i interpretacja klastrów
+
+```{python}
+#| echo: true
+#| output: false
+
+import pandas as pd
+import numpy as np
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Przygotuj dane (powtarzamy dla kompletności)
+np.random.seed(42)
+n_customers = 1000
+
+customer_types = np.random.choice(['premium', 'average', 'bargain', 'sporadic'], n_customers, 
+                                 p=[0.15, 0.35, 0.35, 0.15])
+
+data = pd.DataFrame({
+    'wiek': np.random.randint(18, 70, n_customers),
+    'roczny_dochod': np.random.normal(50000, 20000, n_customers),
+    'wydatki_roczne': np.random.normal(25000, 15000, n_customers),
+    'liczba_zakupow': np.random.randint(1, 50, n_customers),
+    'sredni_koszt_zakupu': np.random.normal(200, 100, n_customers),
+    'lata_jako_klient': np.random.randint(0, 10, n_customers),
+    'typ_klienta': customer_types
+})
+
+# Popraw dane według typów
+for i, typ in enumerate(data['typ_klienta']):
+    if typ == 'premium':
+        data.loc[i, 'roczny_dochod'] = np.random.normal(80000, 15000)
+        data.loc[i, 'wydatki_roczne'] = np.random.normal(45000, 10000)
+        data.loc[i, 'liczba_zakupow'] = np.random.randint(20, 50)
+        data.loc[i, 'sredni_koszt_zakupu'] = np.random.normal(400, 100)
+    elif typ == 'bargain':
+        data.loc[i, 'roczny_dochod'] = np.random.normal(30000, 10000)
+        data.loc[i, 'wydatki_roczne'] = np.random.normal(8000, 3000)
+        data.loc[i, 'liczba_zakupow'] = np.random.randint(15, 40)
+        data.loc[i, 'sredni_koszt_zakupu'] = np.random.normal(80, 30)
+    elif typ == 'sporadic':
+        data.loc[i, 'roczny_dochod'] = np.random.normal(45000, 15000)
+        data.loc[i, 'wydatki_roczne'] = np.random.normal(5000, 2000)
+        data.loc[i, 'liczba_zakupow'] = np.random.randint(1, 8)
+        data.loc[i, 'sredni_koszt_zakupu'] = np.random.normal(300, 150)
+
+data['roczny_dochod'] = np.maximum(data['roczny_dochod'], 15000)
+data['wydatki_roczne'] = np.maximum(data['wydatki_roczne'], 1000)
+data['sredni_koszt_zakupu'] = np.maximum(data['sredni_koszt_zakupu'], 20)
+
+# Przygotuj model
+features = ['wiek', 'roczny_dochod', 'wydatki_roczne', 'liczba_zakupow', 
+           'sredni_koszt_zakupu', 'lata_jako_klient']
+X = data[features]
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Znajdź optymalne K
+silhouette_scores = []
+K_range = range(2, 11)
+for k in K_range:
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+    kmeans.fit(X_scaled)
+    silhouette_scores.append(silhouette_score(X_scaled, kmeans.labels_))
+
+best_k = K_range[np.argmax(silhouette_scores)]
+
+# Trenuj finalny model
+final_kmeans = KMeans(n_clusters=best_k, random_state=42, n_init=10)
+cluster_labels = final_kmeans.fit_predict(X_scaled)
+data['klaster'] = cluster_labels
+
+# Analiza charakterystyk klastrów
+cluster_analysis = data.groupby('klaster')[features].mean()
+
+print("CHARAKTERYSTYKI KLASTRÓW:")
+print("=" * 50)
+
+for cluster_id in range(best_k):
+    print(f"\nKLASTER {cluster_id}:")
+    cluster_data = data[data['klaster'] == cluster_id]
+    
+    print(f"Liczba klientów: {len(cluster_data)} ({len(cluster_data)/len(data)*100:.1f}%)")
+    print(f"Średni wiek: {cluster_data['wiek'].mean():.0f} lat")
+    print(f"Średni dochód: {cluster_data['roczny_dochod'].mean():.0f} zł")
+    print(f"Średnie wydatki: {cluster_data['wydatki_roczne'].mean():.0f} zł")
+    print(f"Średnia liczba zakupów: {cluster_data['liczba_zakupow'].mean():.0f}")
+    print(f"Średni koszt zakupu: {cluster_data['sredni_koszt_zakupu'].mean():.0f} zł")
+    
+    # Nadaj nazwę klastrowi na podstawie charakterystyk
+    avg_income = cluster_data['roczny_dochod'].mean()
+    avg_spending = cluster_data['wydatki_roczne'].mean()
+    avg_frequency = cluster_data['liczba_zakupow'].mean()
+    
+    if avg_income > 60000 and avg_spending > 30000:
+        cluster_name = "🌟 PREMIUM CUSTOMERS"
+    elif avg_frequency < 10 and avg_spending < 10000:
+        cluster_name = "😴 SPORADYCZNI KLIENCI"
+    elif avg_spending / avg_income < 0.3 and avg_frequency > 20:
+        cluster_name = "💰 BARGAIN HUNTERS"
+    else:
+        cluster_name = "🔄 ŚREDNI KLIENCI"
+    
+    print(f"Typ: {cluster_name}")
+
+# Przygotuj wizualizację
+plt.figure(figsize=(12, 8))
+
+# Wykres 1: Dochód vs Wydatki
+plt.subplot(2, 2, 1)
+scatter = plt.scatter(data['roczny_dochod'], data['wydatki_roczne'], 
+                     c=data['klaster'], cmap='viridis', alpha=0.6)
+plt.xlabel('Roczny dochód')
+plt.ylabel('Wydatki roczne')
+plt.title('Dochód vs Wydatki')
+plt.colorbar(scatter)
+
+# Wykres 2: Wiek vs Liczba zakupów
+plt.subplot(2, 2, 2)
+scatter2 = plt.scatter(data['wiek'], data['liczba_zakupow'], 
+                      c=data['klaster'], cmap='viridis', alpha=0.6)
+plt.xlabel('Wiek')
+plt.ylabel('Liczba zakupów')
+plt.title('Wiek vs Liczba zakupów')
+plt.colorbar(scatter2)
+
+# Wykres 3: Średni koszt vs Liczba zakupów
+plt.subplot(2, 2, 3)
+scatter3 = plt.scatter(data['sredni_koszt_zakupu'], data['liczba_zakupow'], 
+                      c=data['klaster'], cmap='viridis', alpha=0.6)
+plt.xlabel('Średni koszt zakupu')
+plt.ylabel('Liczba zakupów')
+plt.title('Koszt vs Częstotliwość')
+plt.colorbar(scatter3)
+
+# Wykres 4: Rozkład klastrów
+plt.subplot(2, 2, 4)
+cluster_counts = data['klaster'].value_counts().sort_index()
+plt.bar(range(len(cluster_counts)), cluster_counts.values, 
+        color=plt.cm.viridis(np.linspace(0, 1, len(cluster_counts))))
+plt.xlabel('Klaster')
+plt.ylabel('Liczba klientów')
+plt.title('Rozmiary klastrów')
+plt.xticks(range(len(cluster_counts)))
+
+plt.tight_layout()
+plt.close()
+
+# Porównanie z rzeczywistymi typami klientów
+if 'typ_klienta' in data.columns:
+    print("\n" + "="*50)
+    print("PORÓWNANIE Z RZECZYWISTYMI TYPAMI:")
+    comparison = pd.crosstab(data['klaster'], data['typ_klienta'])
+    print(comparison)
+
+# Odtwórz wykresy
+plt.figure(figsize=(12, 8))
+
+plt.subplot(2, 2, 1)
+scatter = plt.scatter(data['roczny_dochod'], data['wydatki_roczne'], 
+                     c=data['klaster'], cmap='viridis', alpha=0.6)
+plt.xlabel('Roczny dochód')
+plt.ylabel('Wydatki roczne')
+plt.title('Dochód vs Wydatki')
+plt.colorbar(scatter)
+
+plt.subplot(2, 2, 2)
+scatter2 = plt.scatter(data['wiek'], data['liczba_zakupow'], 
+                      c=data['klaster'], cmap='viridis', alpha=0.6)
+plt.xlabel('Wiek')
+plt.ylabel('Liczba zakupów')
+plt.title('Wiek vs Liczba zakupów')
+plt.colorbar(scatter2)
+
+plt.subplot(2, 2, 3)
+scatter3 = plt.scatter(data['sredni_koszt_zakupu'], data['liczba_zakupow'], 
+                      c=data['klaster'], cmap='viridis', alpha=0.6)
+plt.xlabel('Średni koszt zakupu')
+plt.ylabel('Liczba zakupów')
+plt.title('Koszt vs Częstotliwość')
+plt.colorbar(scatter3)
+
+plt.subplot(2, 2, 4)
+cluster_counts = data['klaster'].value_counts().sort_index()
+plt.bar(range(len(cluster_counts)), cluster_counts.values, 
+        color=plt.cm.viridis(np.linspace(0, 1, len(cluster_counts))))
+plt.xlabel('Klaster')
+plt.ylabel('Liczba klientów')
+plt.title('Rozmiary klastrów')
+plt.xticks(range(len(cluster_counts)))
+
+plt.tight_layout()
+plt.show()
+```
+
+::: {.callout-note collapse="true"}
+## Pokaż analizę klastrów i wizualizacje
+
+```{python}
+#| echo: false
+#| fig-cap: "Analiza klastrów klientów"
+#| fig-width: 12
+#| fig-height: 8
+
+print("CHARAKTERYSTYKI KLASTRÓW:")
+print("=" * 50)
+
+for cluster_id in range(best_k):
+    print(f"\nKLASTER {cluster_id}:")
+    cluster_data = data[data['klaster'] == cluster_id]
+    
+    print(f"Liczba klientów: {len(cluster_data)} ({len(cluster_data)/len(data)*100:.1f}%)")
+    print(f"Średni wiek: {cluster_data['wiek'].mean():.0f} lat")
+    print(f"Średni dochód: {cluster_data['roczny_dochod'].mean():.0f} zł")
+    print(f"Średnie wydatki: {cluster_data['wydatki_roczne'].mean():.0f} zł")
+    print(f"Średnia liczba zakupów: {cluster_data['liczba_zakupow'].mean():.0f}")
+    print(f"Średni koszt zakupu: {cluster_data['sredni_koszt_zakupu'].mean():.0f} zł")
+    
+    # Nadaj nazwę klastrowi na podstawie charakterystyk
+    avg_income = cluster_data['roczny_dochod'].mean()
+    avg_spending = cluster_data['wydatki_roczne'].mean()
+    avg_frequency = cluster_data['liczba_zakupow'].mean()
+    
+    if avg_income > 60000 and avg_spending > 30000:
+        cluster_name = "🌟 PREMIUM CUSTOMERS"
+    elif avg_frequency < 10 and avg_spending < 10000:
+        cluster_name = "😴 SPORADYCZNI KLIENCI"
+    elif avg_spending / avg_income < 0.3 and avg_frequency > 20:
+        cluster_name = "💰 BARGAIN HUNTERS"
+    else:
+        cluster_name = "🔄 ŚREDNI KLIENCI"
+    
+    print(f"Typ: {cluster_name}")
+
+if 'typ_klienta' in data.columns:
+    print("\n" + "="*50)
+    print("PORÓWNANIE Z RZECZYWISTYMI TYPAMI:")
+    comparison = pd.crosstab(data['klaster'], data['typ_klienta'])
+    print(comparison)
+
+# Odtwórz wykresy
+plt.figure(figsize=(12, 8))
+
+plt.subplot(2, 2, 1)
+scatter = plt.scatter(data['roczny_dochod'], data['wydatki_roczne'], 
+                     c=data['klaster'], cmap='viridis', alpha=0.6)
+plt.xlabel('Roczny dochód')
+plt.ylabel('Wydatki roczne')
+plt.title('Dochód vs Wydatki')
+plt.colorbar(scatter)
+
+plt.subplot(2, 2, 2)
+scatter2 = plt.scatter(data['wiek'], data['liczba_zakupow'], 
+                      c=data['klaster'], cmap='viridis', alpha=0.6)
+plt.xlabel('Wiek')
+plt.ylabel('Liczba zakupów')
+plt.title('Wiek vs Liczba zakupów')
+plt.colorbar(scatter2)
+
+plt.subplot(2, 2, 3)
+scatter3 = plt.scatter(data['sredni_koszt_zakupu'], data['liczba_zakupow'], 
+                      c=data['klaster'], cmap='viridis', alpha=0.6)
+plt.xlabel('Średni koszt zakupu')
+plt.ylabel('Liczba zakupów')
+plt.title('Koszt vs Częstotliwość')
+plt.colorbar(scatter3)
+
+plt.subplot(2, 2, 4)
+cluster_counts = data['klaster'].value_counts().sort_index()
+plt.bar(range(len(cluster_counts)), cluster_counts.values, 
+        color=plt.cm.viridis(np.linspace(0, 1, len(cluster_counts))))
+plt.xlabel('Klaster')
+plt.ylabel('Liczba klientów')
+plt.title('Rozmiary klastrów')
+plt.xticks(range(len(cluster_counts)))
+
+plt.tight_layout()
+plt.show()
+```
+:::
+
+---
+
+## 🎯 Praktyczne zastosowania K-Means
+
+### 1) **Marketing - personalizacja kampanii**
+```{python}
+#| echo: true
+#| output: false
+
+# Strategia marketingowa na podstawie klastrów
+def marketing_strategy(cluster_id, cluster_data):
+    avg_income = cluster_data['roczny_dochod'].mean()
+    avg_spending = cluster_data['wydatki_roczne'].mean()
+    avg_frequency = cluster_data['liczba_zakupow'].mean()
+    
+    if avg_income > 60000 and avg_spending > 30000:
+        return {
+            'segment': 'Premium Customers',
+            'strategy': 'Produkty luksusowe, VIP program, personal shopping',
+            'budget_allocation': '40%',
+            'channels': 'Email premium, personal calls, exclusive events'
+        }
+    elif avg_frequency < 10 and avg_spending < 10000:
+        return {
+            'segment': 'Sporadic Customers', 
+            'strategy': 'Reaktywacja, oferty specjalne, przypomnienia',
+            'budget_allocation': '15%',
+            'channels': 'SMS, push notifications, retargeting ads'
+        }
+    elif avg_spending / avg_income < 0.3 and avg_frequency > 20:
+        return {
+            'segment': 'Bargain Hunters',
+            'strategy': 'Promocje, wyprzedaże, programy lojalnościowe',
+            'budget_allocation': '25%', 
+            'channels': 'Newsletter z promocjami, social media deals'
+        }
+    else:
+        return {
+            'segment': 'Average Customers',
+            'strategy': 'Standardowe produkty, cross-selling, up-selling',
+            'budget_allocation': '20%',
+            'channels': 'Email marketing, social media, display ads'
+        }
+
+print("STRATEGIA MARKETINGOWA DLA KAŻDEGO KLASTRA:")
+print("=" * 60)
+
+for cluster_id in range(best_k):
+    cluster_data = data[data['klaster'] == cluster_id]
+    strategy = marketing_strategy(cluster_id, cluster_data)
+    
+    print(f"\nKLASTER {cluster_id}: {strategy['segment']}")
+    print(f"Strategia: {strategy['strategy']}")
+    print(f"Budżet: {strategy['budget_allocation']}")
+    print(f"Kanały: {strategy['channels']}")
+```
+
+::: {.callout-note collapse="true"}
+## Pokaż strategię marketingową
+
+```{python}
+#| echo: false
+
+print("STRATEGIA MARKETINGOWA DLA KAŻDEGO KLASTRA:")
+print("=" * 60)
+
+for cluster_id in range(best_k):
+    cluster_data = data[data['klaster'] == cluster_id]
+    strategy = marketing_strategy(cluster_id, cluster_data)
+    
+    print(f"\nKLASTER {cluster_id}: {strategy['segment']}")
+    print(f"Strategia: {strategy['strategy']}")
+    print(f"Budżet: {strategy['budget_allocation']}")
+    print(f"Kanały: {strategy['channels']}")
+```
+:::
+
+### 2) **Inne branże**
+
+```{python}
+# Healthcare - grupowanie pacjentów
+healthcare_features = ['wiek', 'BMI', 'ciśnienie', 'cholesterol', 'aktywność_fizyczna']
+# Wynik: programy profilaktyczne dostosowane do grup ryzyka
+
+# Finanse - portfolio management  
+finance_features = ['dochód', 'tolerancja_ryzyka', 'horyzont_inwestycji', 'doświadczenie']
+# Wynik: personalizowane porady inwestycyjne
+
+# Retail - optymalizacja sklepów
+retail_features = ['lokalizacja', 'demografia', 'konkurencja', 'ruch_pieszy']  
+# Wynik: optymalne rozmieszczenie produktów w różnych lokalizacjach
+```
+
+---
+
+## ⚙️ Tuning parametrów K-Means
+
+```{python}
+#| echo: true
+#| output: false
+
+from sklearn.cluster import KMeans
+
+# 1) Różne metody inicjalizacji
+init_methods = ['k-means++', 'random']
+results = {}
+
+for init_method in init_methods:
+    kmeans = KMeans(n_clusters=best_k, init=init_method, n_init=10, random_state=42)
+    labels = kmeans.fit_predict(X_scaled)
+    sil_score = silhouette_score(X_scaled, labels)
+    results[init_method] = sil_score
+
+print("Porównanie metod inicjalizacji:")
+for method, score in results.items():
+    print(f"{method}: Silhouette = {score:.3f}")
+
+# 2) Wpływ liczby inicjalizacji
+n_init_values = [1, 5, 10, 20]
+for n_init in n_init_values:
+    kmeans = KMeans(n_clusters=best_k, n_init=n_init, random_state=42)
+    start_time = pd.Timestamp.now()
+    kmeans.fit(X_scaled)
+    end_time = pd.Timestamp.now()
+    duration = (end_time - start_time).total_seconds()
+    sil_score = silhouette_score(X_scaled, kmeans.labels_)
+    print(f"n_init={n_init}: Silhouette={sil_score:.3f}, Czas={duration:.2f}s")
+
+# 3) Różne algorytmy
+algorithms = ['lloyd', 'elkan']  # 'auto' wybiera automatycznie
+for algorithm in algorithms:
+    try:
+        kmeans = KMeans(n_clusters=best_k, algorithm=algorithm, random_state=42)
+        start_time = pd.Timestamp.now()
+        kmeans.fit(X_scaled)
+        end_time = pd.Timestamp.now()
+        duration = (end_time - start_time).total_seconds()
+        print(f"Algorytm {algorithm}: Czas={duration:.2f}s")
+    except:
+        print(f"Algorytm {algorithm}: Niedostępny w tej wersji")
+```
+
+::: {.callout-note collapse="true"}
+## Pokaż wyniki tuningu
+
+```{python}
+#| echo: false
+
+print("Porównanie metod inicjalizacji:")
+for method, score in results.items():
+    print(f"{method}: Silhouette = {score:.3f}")
+
+n_init_values = [1, 5, 10, 20]
+for n_init in n_init_values:
+    kmeans = KMeans(n_clusters=best_k, n_init=n_init, random_state=42)
+    start_time = pd.Timestamp.now()
+    kmeans.fit(X_scaled)
+    end_time = pd.Timestamp.now()
+    duration = (end_time - start_time).total_seconds()
+    sil_score = silhouette_score(X_scaled, kmeans.labels_)
+    print(f"n_init={n_init}: Silhouette={sil_score:.3f}, Czas={duration:.2f}s")
+```
+:::
+
+---
+
+## ⚠️ Pułapki i rozwiązania
+
+### 1) **Brak standaryzacji danych**
+```{python}
+#| echo: true
+#| output: false
+
+# Problem: różne skale zmiennych
+print("PROBLEM: Bez standaryzacji")
+print("Dochód (tysiące): 20-80")  
+print("Wiek (lata): 18-70")
+print("→ K-Means będzie skupiać się głównie na dochodzie!")
+
+# Demonstracja
+kmeans_unscaled = KMeans(n_clusters=3, random_state=42)
+labels_unscaled = kmeans_unscaled.fit_predict(X[['roczny_dochod', 'wiek']])
+
+kmeans_scaled = KMeans(n_clusters=3, random_state=42)  
+X_subset_scaled = scaler.fit_transform(X[['roczny_dochod', 'wiek']])
+labels_scaled = kmeans_scaled.fit_predict(X_subset_scaled)
+
+sil_unscaled = silhouette_score(X[['roczny_dochod', 'wiek']], labels_unscaled)
+sil_scaled = silhouette_score(X_subset_scaled, labels_scaled)
+
+print(f"\nWyniki:")
+print(f"Bez standaryzacji: Silhouette = {sil_unscaled:.3f}")
+print(f"Ze standaryzacją: Silhouette = {sil_scaled:.3f}")
+print("✅ Standaryzacja ZAWSZE poprawia wyniki!")
+```
+
+::: {.callout-note collapse="true"}
+## Pokaż problem standaryzacji
+
+```{python}
+#| echo: false
+
+print(f"\nWyniki:")
+print(f"Bez standaryzacji: Silhouette = {sil_unscaled:.3f}")
+print(f"Ze standaryzacją: Silhouette = {sil_scaled:.3f}")
+print("✅ Standaryzacja ZAWSZE poprawia wyniki!")
+```
+:::
+
+### 2) **Outliers - wartości odstające**
+```{python}
+#| echo: true
+#| output: false
+
+# Problem: outliers zakłócają centroidy klastrów
+from sklearn.preprocessing import RobustScaler
+
+# Dodaj kilka outlierów
+data_with_outliers = data.copy()
+data_with_outliers.loc[0, 'roczny_dochod'] = 500000  # milioner!
+data_with_outliers.loc[1, 'wydatki_roczne'] = 200000  # mega wydatki
+
+X_outliers = data_with_outliers[features]
+
+# Porównaj różne skalery
+scalers = {
+    'StandardScaler': StandardScaler(),
+    'RobustScaler': RobustScaler()  # odporny na outliers
+}
+
+print("Wpływ outliers:")
+for scaler_name, scaler_obj in scalers.items():
+    X_scaled_comp = scaler_obj.fit_transform(X_outliers)
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    labels = kmeans.fit_predict(X_scaled_comp)
+    sil_score = silhouette_score(X_scaled_comp, labels)
+    print(f"{scaler_name}: Silhouette = {sil_score:.3f}")
+
+print("\n✅ RobustScaler lepiej radzi sobie z outliers!")
+```
+
+::: {.callout-note collapse="true"}
+## Pokaż wpływ outliers
+
+```{python}
+#| echo: false
+
+print("Wpływ outliers:")
+for scaler_name, scaler_obj in scalers.items():
+    X_scaled_comp = scaler_obj.fit_transform(X_outliers)
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    labels = kmeans.fit_predict(X_scaled_comp)
+    sil_score = silhouette_score(X_scaled_comp, labels)
+    print(f"{scaler_name}: Silhouette = {sil_score:.3f}")
+
+print("\n✅ RobustScaler lepiej radzi sobie z outliers!")
+```
+:::
+
+### 3) **Curse of dimensionality**
+```{python}
+#| echo: true
+#| output: false
+
+# Problem: za dużo wymiarów
+from sklearn.decomposition import PCA
+
+print("Problem wielu wymiarów:")
+dimensions = [2, 5, 10, 20, 50]
+
+for n_dims in dimensions:
+    if n_dims <= X_scaled.shape[1]:
+        X_subset = X_scaled[:, :n_dims]
+    else:
+        # Dodaj sztuczne wymiary
+        extra_dims = np.random.randn(X_scaled.shape[0], n_dims - X_scaled.shape[1])
+        X_subset = np.hstack([X_scaled, extra_dims])
+    
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    labels = kmeans.fit_predict(X_subset)
+    
+    if len(np.unique(labels)) > 1:  # sprawdź czy są różne klastry
+        sil_score = silhouette_score(X_subset, labels)
+        print(f"{n_dims} wymiarów: Silhouette = {sil_score:.3f}")
+    else:
+        print(f"{n_dims} wymiarów: Wszystkie punkty w jednym klastrze!")
+
+print("\nRozwiązanie: PCA dimensionality reduction")
+pca = PCA(n_components=0.95)  # zachowaj 95% wariancji
+X_pca = pca.fit_transform(X_scaled)
+print(f"Redukcja z {X_scaled.shape[1]} do {X_pca.shape[1]} wymiarów")
+
+kmeans_pca = KMeans(n_clusters=3, random_state=42)
+labels_pca = kmeans_pca.fit_predict(X_pca)
+sil_pca = silhouette_score(X_pca, labels_pca)
+print(f"Po PCA: Silhouette = {sil_pca:.3f}")
+```
+
+::: {.callout-note collapse="true"}
+## Pokaż problem wymiarowości
+
+```{python}
+#| echo: false
+
+print("Problem wielu wymiarów:")
+dimensions = [2, 5, 10, 20, 50]
+
+for n_dims in dimensions:
+    if n_dims <= X_scaled.shape[1]:
+        X_subset = X_scaled[:, :n_dims]
+    else:
+        # Dodaj sztuczne wymiary
+        extra_dims = np.random.randn(X_scaled.shape[0], n_dims - X_scaled.shape[1])
+        X_subset = np.hstack([X_scaled, extra_dims])
+    
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    labels = kmeans.fit_predict(X_subset)
+    
+    if len(np.unique(labels)) > 1:  # sprawdź czy są różne klastry
+        sil_score = silhouette_score(X_subset, labels)
+        print(f"{n_dims} wymiarów: Silhouette = {sil_score:.3f}")
+    else:
+        print(f"{n_dims} wymiarów: Wszystkie punkty w jednym klastrze!")
+
+print("\nRozwiązanie: PCA dimensionality reduction")
+print(f"Redukcja z {X_scaled.shape[1]} do {X_pca.shape[1]} wymiarów")
+print(f"Po PCA: Silhouette = {sil_pca:.3f}")
+```
+:::
+
+---
+
+## 🌍 Real-world przypadki użycia
+
+1. **E-commerce:** Segmentacja klientów, personalizacja, dynamic pricing
+2. **Marketing:** Customer personas, campaign optimization, market research  
+3. **Finance:** Portfolio optimization, risk assessment, fraud detection
+4. **Healthcare:** Patient stratification, treatment personalization, drug discovery
+5. **Operations:** Supply chain optimization, demand forecasting, quality control
+
+::: {.callout-tip}
+## 💡 Kiedy używać K-Means?
+
+**✅ UŻYJ GDY:**
+
+- Chcesz odkryć ukryte grupy w danych bez etykiet
+- Dane mają podobne gęstości i są "okrągłe" (sferyczne klastry)
+- Potrzebujesz szybkiego i skalowalnego algorytmu
+- Wiesz w przybliżeniu ile może być grup (K)
+- Chcesz segmentować klientów, produkty, rynki
+
+**❌ NIE UŻYWAJ GDY:**
+
+- Klastry mają różne rozmiary lub gęstości (użyj DBSCAN)
+- Klastry mają nieregularne kształty (użyj Hierarchical Clustering)
+- Nie wiesz wcale ile może być grup (użyj DBSCAN/HDBSCAN)
+- Masz kategoryczne zmienne (użyj K-Modes)
+- Dane mają dużo outliers (użyj DBSCAN)
+:::
+
+**Następna ściągawka:** Support Vector Machines - znajdowanie optymalnych granic! 🎯

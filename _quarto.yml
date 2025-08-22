@@ -22,6 +22,12 @@ website:
             href: cheatsheets/02-linear-regression.qmd
           - text: "Decision Trees"
             href: cheatsheets/03-decision-trees.qmd
+          - text: "Random Forest"
+            href: cheatsheets/04-random-forest.qmd
+          - text: "K-Means Clustering"
+            href: cheatsheets/05-kmeans.qmd
+          - text: "Support Vector Machines"
+            href: cheatsheets/06-svm.qmd
 
 format:
   html:
