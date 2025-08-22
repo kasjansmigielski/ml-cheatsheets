@@ -244,7 +244,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="praktyczny-przykład-klasyfikacja-klientów-banku" class="level2">
 <h2 class="anchored" data-anchor-id="praktyczny-przykład-klasyfikacja-klientów-banku">🎯 Praktyczny przykład: klasyfikacja klientów banku</h2>
 <p>Czy klient weźmie kredyt na podstawie jego profilu?</p>
-<div id="477af6a1" class="cell" data-execution_count="1">
+<div id="e87141d0" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeClassifier</span>
@@ -325,7 +325,7 @@ Pokaż statystyki i odsetki przyznanych kredytów
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="8d40fd05" class="cell" data-execution_count="2">
+<div id="c57c79af" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>Statystyki klientów:
               wiek         dochod   oszczednosci  liczba_dzieci
@@ -350,7 +350,7 @@ Odsetek przyznanych kredytów: 63.8%</code></pre>
 <h2 class="anchored" data-anchor-id="budowanie-modelu-krok-po-kroku">🔧 Budowanie modelu krok po kroku</h2>
 <section id="przygotowanie-danych" class="level3">
 <h3 class="anchored" data-anchor-id="przygotowanie-danych">1) Przygotowanie danych</h3>
-<div id="ea573bd9" class="cell" data-execution_count="3">
+<div id="376a7a3a" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Encoding kategorycznych zmiennych</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> LabelEncoder</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -384,7 +384,7 @@ Pokaż wyniki dane treningowe i testowe
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="764c66a0" class="cell" data-execution_count="4">
+<div id="0b7485d3" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
 <pre><code>Dane treningowe: 1600 klientów
 Dane testowe: 400 klientów</code></pre>
@@ -396,7 +396,7 @@ Dane testowe: 400 klientów</code></pre>
 </section>
 <section id="trenowanie-decision-tree" class="level3">
 <h3 class="anchored" data-anchor-id="trenowanie-decision-tree">2) Trenowanie Decision Tree</h3>
-<div id="38b23ee9" class="cell" data-execution_count="5">
+<div id="365bc68b" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tworzenie modelu z ograniczeniami (żeby nie był za głęboki)</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dt_model <span class="op">=</span> DecisionTreeClassifier(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    max_depth<span class="op">=</span><span class="dv">5</span>,        <span class="co"># maksymalna głębokość drzewa</span></span>
@@ -424,7 +424,7 @@ Pokaż parametry wytrenowanego modelu
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="3fd61c60" class="cell" data-execution_count="6">
+<div id="26589bad" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-stdout">
 <pre><code>Model wytrenowany!
 Głębokość drzewa: 5
@@ -437,7 +437,7 @@ Liczba liści: 20</code></pre>
 </section>
 <section id="ewaluacja-modelu" class="level3">
 <h3 class="anchored" data-anchor-id="ewaluacja-modelu">3) Ewaluacja modelu</h3>
-<div id="0a6b2ae0" class="cell" data-execution_count="7">
+<div id="5dd6c747" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predykcje</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> dt_model.predict(X_test)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>y_pred_proba <span class="op">=</span> dt_model.predict_proba(X_test)[:, <span class="dv">1</span>]</span>
@@ -469,7 +469,7 @@ Pokaż wyniki
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="92116d1d" class="cell" data-execution_count="8">
+<div id="679190c2" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Confusion Matrix:
@@ -486,7 +486,7 @@ Rzeczywiste Tak:  27   217</code></pre>
 </section>
 <section id="wizualizacja-drzewa-decyzyjnego" class="level2">
 <h2 class="anchored" data-anchor-id="wizualizacja-drzewa-decyzyjnego">🎨 Wizualizacja drzewa decyzyjnego</h2>
-<div id="557fb42a" class="cell" data-execution_count="9">
+<div id="f7109dd9" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeClassifier</span>
@@ -611,7 +611,7 @@ Pokaż wyniki i drzewo decyzyjne
 </div>
 <div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="8b7c00be" class="cell" data-fig-height="10" data-fig-width="20" data-execution_count="10">
+<div id="797d5253" class="cell" data-fig-height="10" data-fig-width="20" data-execution_count="10">
 <div class="cell-output cell-output-stdout">
 <pre><code>Wyniki modelu Decision Tree:
 Głębokość drzewa: 5
@@ -652,7 +652,7 @@ dochód: 0.001</code></pre>
 </section>
 <section id="interpretacja-decyzji-dla-konkretnego-klienta" class="level2">
 <h2 class="anchored" data-anchor-id="interpretacja-decyzji-dla-konkretnego-klienta">🔍 Interpretacja decyzji dla konkretnego klienta</h2>
-<div id="66482235" class="cell" data-execution_count="11">
+<div id="8d8b2b71" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Funkcja do interpretacji ścieżki decyzyjnej</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> explain_decision(model, X_sample, feature_names):</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Pobierz ścieżkę w drzewie</span></span>
@@ -701,7 +701,7 @@ Pokaż dane klienta testowego
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="d34a8756" class="cell" data-execution_count="12">
+<div id="d301098a" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-stdout">
 <pre><code>Klient testowy:
 Wiek: 56.0
@@ -721,7 +721,7 @@ Prawdopodobieństwo: 3.0%</code></pre>
 <h2 class="anchored" data-anchor-id="różne-zastosowania-decision-trees">🎯 Różne zastosowania Decision Trees</h2>
 <section id="medyczna-diagnoza" class="level3">
 <h3 class="anchored" data-anchor-id="medyczna-diagnoza">1) <strong>Medyczna diagnoza</strong></h3>
-<div id="867ac89e" class="cell" data-execution_count="13">
+<div id="7a1b5d25" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Przykład klasyfikacji ryzyka chorób serca</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>medical_features <span class="op">=</span> [<span class="st">'wiek'</span>, <span class="st">'cholesterol'</span>, <span class="st">'ciśnienie'</span>, <span class="st">'BMI'</span>, <span class="st">'pali_papierosy'</span>]</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Target: 'ryzyko_chorób_serca' (wysokie/niskie)</span></span>
@@ -732,7 +732,7 @@ Prawdopodobieństwo: 3.0%</code></pre>
 </section>
 <section id="marketing---segmentacja-klientów" class="level3">
 <h3 class="anchored" data-anchor-id="marketing---segmentacja-klientów">2) <strong>Marketing - segmentacja klientów</strong></h3>
-<div id="17e25259" class="cell" data-execution_count="14">
+<div id="580e87bd" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Przewidywanie czy klient kupi produkt premium</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>marketing_features <span class="op">=</span> [<span class="st">'dochód_roczny'</span>, <span class="st">'wiek'</span>, <span class="st">'wykształcenie'</span>, <span class="st">'poprzednie_zakupy'</span>]</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Target: 'kupi_premium' (tak/nie)</span></span>
@@ -743,7 +743,7 @@ Prawdopodobieństwo: 3.0%</code></pre>
 </section>
 <section id="hr---decyzje-o-zatrudnieniu" class="level3">
 <h3 class="anchored" data-anchor-id="hr---decyzje-o-zatrudnieniu">3) <strong>HR - decyzje o zatrudnieniu</strong></h3>
-<div id="0e4095bc" class="cell" data-execution_count="15">
+<div id="111549b1" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Przewidywanie sukcesu kandydata w rekrutacji</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>hr_features <span class="op">=</span> [<span class="st">'doświadczenie_lat'</span>, <span class="st">'wykształcenie'</span>, <span class="st">'wynik_testów'</span>, <span class="st">'referencje'</span>]</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Target: 'zatrudniony' (tak/nie)</span></span>
@@ -756,7 +756,7 @@ Prawdopodobieństwo: 3.0%</code></pre>
 </section>
 <section id="tuning-parametrów" class="level2">
 <h2 class="anchored" data-anchor-id="tuning-parametrów">⚙️ Tuning parametrów</h2>
-<div id="ca8c8c86" class="cell" data-execution_count="16">
+<div id="1a75a558" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Najważniejsze parametry do tuningu</span></span>
@@ -799,7 +799,7 @@ Pokaż najlepsze parametry
 </div>
 <div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="dd0697e0" class="cell" data-execution_count="17">
+<div id="fd278a5a" class="cell" data-execution_count="17">
 <div class="cell-output cell-output-stdout">
 <pre><code>Najlepsze parametry:
 {'criterion': 'gini', 'max_depth': 5, 'min_samples_leaf': 20, 'min_samples_split': 20}
@@ -816,7 +816,7 @@ Dokładność na test set: 95.0%</code></pre>
 <h2 class="anchored" data-anchor-id="problemy-i-rozwiązania">⚠️ Problemy i rozwiązania</h2>
 <section id="overfitting---drzewo-za-głębokie" class="level3">
 <h3 class="anchored" data-anchor-id="overfitting---drzewo-za-głębokie">1) <strong>Overfitting - drzewo za głębokie</strong></h3>
-<div id="cc33161e" class="cell" data-execution_count="18">
+<div id="392cf8f0" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem: drzewo "pamięta" dane treningowe</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>overfitted_tree <span class="op">=</span> DecisionTreeClassifier()  <span class="co"># bez ograniczeń!</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>overfitted_tree.fit(X_train, y_train)</span>
@@ -853,7 +853,7 @@ Pokaż wyniki
 </div>
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="bd03037e" class="cell" data-execution_count="19">
+<div id="f8bd9dfa" class="cell" data-execution_count="19">
 <div class="cell-output cell-output-stdout">
 <pre><code>Overfitted model:
 Train accuracy: 100.0%
@@ -872,7 +872,7 @@ Różnica: 1.7% - znacznie lepiej!</code></pre>
 </section>
 <section id="brak-stabilności---małe-zmiany-różne-drzewa" class="level3">
 <h3 class="anchored" data-anchor-id="brak-stabilności---małe-zmiany-różne-drzewa">2) <strong>Brak stabilności - małe zmiany = różne drzewa</strong></h3>
-<div id="1039c84c" class="cell" data-execution_count="20">
+<div id="291c7713" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem demonstracji</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> []</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
@@ -898,7 +898,7 @@ Pokaż wyniki
 </div>
 <div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="abf71be6" class="cell" data-execution_count="21">
+<div id="4cb543ba" class="cell" data-execution_count="21">
 <div class="cell-output cell-output-stdout">
 <pre><code>Dokładność różnych drzew: 96.2% - 96.2%
 Rozrzut: 0.0%
@@ -949,7 +949,7 @@ Rozwiązanie: Random Forest (następna ściągawka!)</code></pre>
 </ul>
 </div>
 </div>
-<p><strong>Następna ściągawka:</strong> Random Forest - zespół drzew (wkrótce)! 🌲🌲🌲</p>
+<p><strong>Następna ściągawka:</strong> <a href="../cheatsheets/04-random-forest.html">Random Forest - zespół drzew</a>! 🌲🌲🌲</p>
 
 
 <!-- -->
@@ -2055,7 +2055,7 @@ Rozwiązanie: Random Forest (następna ściągawka!)</code></pre>
 <span id="cb22-688"><a href="#cb22-688" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Przewidujesz wartości ciągłe (lepiej Linear Regression)</span>
 <span id="cb22-689"><a href="#cb22-689" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb22-690"><a href="#cb22-690" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-691"><a href="#cb22-691" aria-hidden="true" tabindex="-1"></a>**Następna ściągawka:** Random Forest - zespół drzew (wkrótce)! 🌲🌲🌲</span>
+<span id="cb22-691"><a href="#cb22-691" aria-hidden="true" tabindex="-1"></a>**Następna ściągawka:** <span class="co">[</span><span class="ot">Random Forest - zespół drzew</span><span class="co">](04-random-forest.qmd)</span>! 🌲🌲🌲</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

@@ -244,7 +244,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="praktyczny-przykład-klasyfikacja-emaili-spamham" class="level2">
 <h2 class="anchored" data-anchor-id="praktyczny-przykład-klasyfikacja-emaili-spamham">🎯 Praktyczny przykład: klasyfikacja emaili spam/ham</h2>
 <p>Czy email to spam czy prawdziwa wiadomość?</p>
-<div id="5bd700ef" class="cell" data-execution_count="1">
+<div id="86165eab" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
@@ -314,7 +314,7 @@ Pokaż statystyki emaili
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="d3fc0cd7" class="cell" data-execution_count="2">
+<div id="4d67b695" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>Statystyki emaili:
        dlugosc_tematu  liczba_wielkich_liter  liczba_wykrzyknikow  \
@@ -364,7 +364,7 @@ Procent spam: 30.8%</code></pre>
 <h2 class="anchored" data-anchor-id="budowanie-modelu-krok-po-kroku">🔧 Budowanie modelu krok po kroku</h2>
 <section id="przygotowanie-danych" class="level3">
 <h3 class="anchored" data-anchor-id="przygotowanie-danych">1) Przygotowanie danych</h3>
-<div id="cd5f6cdc" class="cell" data-execution_count="3">
+<div id="d3f87247" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Features do modelu</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> [<span class="st">'dlugosc_tematu'</span>, <span class="st">'liczba_wielkich_liter'</span>, <span class="st">'liczba_wykrzyknikow'</span>, </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">'liczba_linkow'</span>, <span class="st">'slowa_promocyjne'</span>, <span class="st">'dlugosc_wiadomosci'</span>, <span class="st">'godzina_wyslania'</span>]</span>
@@ -400,7 +400,7 @@ Pokaż podział danych
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="a180629e" class="cell" data-execution_count="4">
+<div id="54d2c3bf" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
 <pre><code>Dane treningowe: 1600 emaili
 Dane testowe: 400 emaili
@@ -419,7 +419,7 @@ Po: [-1.36651173 -0.75972497 -0.9773396  -0.41945283 -0.73519846  1.00688364
 </section>
 <section id="trenowanie-różnych-kerneli-svm" class="level3">
 <h3 class="anchored" data-anchor-id="trenowanie-różnych-kerneli-svm">2) Trenowanie różnych kerneli SVM</h3>
-<div id="58bff683" class="cell" data-execution_count="5">
+<div id="8bc127b6" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Porównanie różnych kerneli</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>kernels <span class="op">=</span> [<span class="st">'linear'</span>, <span class="st">'rbf'</span>, <span class="st">'poly'</span>]</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>svm_results <span class="op">=</span> {}</span>
@@ -467,7 +467,7 @@ Pokaż wyniki różnych kerneli
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="4c4adb23" class="cell" data-execution_count="6">
+<div id="849f8d74" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Kernel linear:
@@ -492,7 +492,7 @@ Najlepsza dokładność: 100.0%</code></pre>
 </section>
 <section id="ewaluacja-najlepszego-modelu" class="level3">
 <h3 class="anchored" data-anchor-id="ewaluacja-najlepszego-modelu">3) Ewaluacja najlepszego modelu</h3>
-<div id="3e9500b8" class="cell" data-execution_count="7">
+<div id="bcc066d3" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Szczegółowa analiza najlepszego modelu</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>best_predictions <span class="op">=</span> svm_results[best_kernel][<span class="st">'predictions'</span>]</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -535,7 +535,7 @@ Pokaż szczegółową analizę
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="8c4113a2" class="cell" data-execution_count="8">
+<div id="495c4bce" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-stdout">
 <pre><code>SZCZEGÓŁOWA ANALIZA - SVM LINEAR
 ==================================================
@@ -569,7 +569,7 @@ False Negatives (Spam → Ham): 0</code></pre>
 </section>
 <section id="wizualizacja-granic-decyzyjnych" class="level2">
 <h2 class="anchored" data-anchor-id="wizualizacja-granic-decyzyjnych">📊 Wizualizacja granic decyzyjnych</h2>
-<div id="74cc1b4c" class="cell" data-execution_count="9">
+<div id="44c58a86" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
@@ -766,7 +766,7 @@ Pokaż wizualizację granic i porównanie
 </div>
 <div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="12d25932" class="cell" data-fig-height="5" data-fig-width="15" data-execution_count="10">
+<div id="1b21fe64" class="cell" data-fig-height="5" data-fig-width="15" data-execution_count="10">
 <div class="cell-output cell-output-stdout">
 <pre><code>PORÓWNANIE KERNELI (2D vs 7D features):
 ==================================================
@@ -792,7 +792,7 @@ POLY   - 2D: 98.2%, 7D: 100.0%, Poprawa: +1.7pp</code></pre>
 <h2 class="anchored" data-anchor-id="rodzaje-kerneli-i-ich-zastosowania">🎯 Rodzaje kerneli i ich zastosowania</h2>
 <section id="linear-kernel---proste-granice" class="level3">
 <h3 class="anchored" data-anchor-id="linear-kernel---proste-granice">1) <strong>Linear Kernel - proste granice</strong></h3>
-<div id="99efbdaa" class="cell" data-execution_count="11">
+<div id="1e01c13a" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Użyj gdy:</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># - Dane są liniowo separowalne</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># - Masz dużo features (high-dimensional)</span></span>
@@ -830,7 +830,7 @@ Pokaż zastosowania Linear Kernel
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="f4cf2465" class="cell" data-execution_count="12">
+<div id="447f9503" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-stdout">
 <pre><code>LINEAR KERNEL - najlepsze zastosowania:
 1. Text classification (high-dimensional sparse data)
@@ -847,7 +847,7 @@ Linear SVM na prostych danych: 98.0%</code></pre>
 </section>
 <section id="rbf-kernel---uniwersalny-wybór" class="level3">
 <h3 class="anchored" data-anchor-id="rbf-kernel---uniwersalny-wybór">2) <strong>RBF Kernel - uniwersalny wybór</strong></h3>
-<div id="9e317c34" class="cell" data-execution_count="13">
+<div id="1b090156" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># RBF (Radial Basis Function) - najczęściej używany</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Może aproksymować dowolną granicę decyzyjną!</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -888,7 +888,7 @@ Pokaż zastosowania RBF Kernel
 </div>
 <div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="a8b97a9e" class="cell" data-execution_count="14">
+<div id="f0e9ff2c" class="cell" data-execution_count="14">
 <div class="cell-output cell-output-stdout">
 <pre><code>RBF KERNEL - najlepsze zastosowania:
 1. Image classification
@@ -912,7 +912,7 @@ Gamma 10.0: Accuracy = 100.0%, Support Vectors = 1546
 </section>
 <section id="polynomial-kernel---dla-złożonych-wzorców" class="level3">
 <h3 class="anchored" data-anchor-id="polynomial-kernel---dla-złożonych-wzorców">3) <strong>Polynomial Kernel - dla złożonych wzorców</strong></h3>
-<div id="b6828a55" class="cell" data-execution_count="15">
+<div id="af134be1" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>poly_use_cases <span class="op">=</span> [</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Computer vision (shape recognition)"</span>,</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Bioinformatics (protein classification)"</span>,</span>
@@ -948,7 +948,7 @@ Pokaż zastosowania Polynomial Kernel
 </div>
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="31520760" class="cell" data-execution_count="16">
+<div id="e5d712fa" class="cell" data-execution_count="16">
 <div class="cell-output cell-output-stdout">
 <pre><code>POLYNOMIAL KERNEL - najlepsze zastosowania:
 1. Computer vision (shape recognition)
@@ -973,7 +973,7 @@ Degree 5: Accuracy = 100.0%
 </section>
 <section id="tuning-parametrów-svm" class="level2">
 <h2 class="anchored" data-anchor-id="tuning-parametrów-svm">⚙️ Tuning parametrów SVM</h2>
-<div id="13f9004d" class="cell" data-execution_count="17">
+<div id="b8cc2a02" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Grid Search dla RBF kernel</span></span>
@@ -1025,7 +1025,7 @@ Pokaż wyniki tuningu
 </div>
 <div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="5e878e48" class="cell" data-execution_count="18">
+<div id="25ed45be" class="cell" data-execution_count="18">
 <div class="cell-output cell-output-stdout">
 <pre><code>Najlepsze parametry RBF:
 {'C': 0.1, 'gamma': 0.01}
@@ -1047,7 +1047,7 @@ Poprawa:           +0.0pp</code></pre>
 <h2 class="anchored" data-anchor-id="pułapki-i-rozwiązania">⚠️ Pułapki i rozwiązania</h2>
 <section id="brak-standaryzacji" class="level3">
 <h3 class="anchored" data-anchor-id="brak-standaryzacji">1) <strong>Brak standaryzacji</strong></h3>
-<div id="6a7be9f7" class="cell" data-execution_count="19">
+<div id="45955508" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem: SVM jest bardzo wrażliwy na skale danych</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DEMONSTRACJA: wpływ standaryzacji"</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1078,7 +1078,7 @@ Pokaż wpływ standaryzacji
 </div>
 <div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="c6e220c6" class="cell" data-execution_count="20">
+<div id="5608f0a4" class="cell" data-execution_count="20">
 <div class="cell-output cell-output-stdout">
 <pre><code>Bez standaryzacji: 88.0%
 Ze standaryzacją:  100.0%
@@ -1093,7 +1093,7 @@ Poprawa:           +12.0pp
 </section>
 <section id="niezbalansowane-klasy" class="level3">
 <h3 class="anchored" data-anchor-id="niezbalansowane-klasy">2) <strong>Niezbalansowane klasy</strong></h3>
-<div id="bd677440" class="cell" data-execution_count="21">
+<div id="0f42b668" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem: gdy jedna klasa jest bardzo rzadka</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"PROBLEM: niezbalansowane klasy"</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1145,7 +1145,7 @@ Pokaż rozwiązania dla niezbalansowanych klas
 </div>
 <div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="3db49554" class="cell" data-execution_count="22">
+<div id="5b500560" class="cell" data-execution_count="22">
 <div class="cell-output cell-output-stdout">
 <pre><code>Balans klas: Spam 30.9%, Ham 69.1%
 
@@ -1161,7 +1161,7 @@ Manual weights: Accuracy=100.0%, Spam Recall=100.0%</code></pre>
 </section>
 <section id="overfitting-z-wysokim-c" class="level3">
 <h3 class="anchored" data-anchor-id="overfitting-z-wysokim-c">3) <strong>Overfitting z wysokim C</strong></h3>
-<div id="3c4a4c07" class="cell" data-execution_count="23">
+<div id="b8b33f79" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem: zbyt wysoka wartość C prowadzi do overfittingu</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>C_values <span class="op">=</span> [<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">1000</span>]</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> []</span>
@@ -1197,7 +1197,7 @@ Pokaż wpływ parametru C
 </div>
 <div id="callout-13" class="callout-13-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="16ed1524" class="cell" data-execution_count="24">
+<div id="735e80c7" class="cell" data-execution_count="24">
 <div class="cell-output cell-output-stdout">
 <pre><code>Wpływ parametru C (regularization):
 C      | Train Acc | Test Acc | Difference | Support Vectors
@@ -1256,7 +1256,8 @@ C      | Train Acc | Test Acc | Difference | Support Vectors
 </ul>
 </div>
 </div>
-<p><strong>Podsumowanie:</strong> SVM to potężny algoritm do klasyfikacji z optymalną separacją klas. Wybierz kernel w zależności od złożoności danych: Linear dla prostych, RBF dla uniwersalnych, Polynomial dla specjalnych przypadków. 🎯</p>
+<p><strong>Podsumowanie:</strong> SVM to potężny algoritm do klasyfikacji z optymalną separacją klas. Wybierz kernel w zależności od złożoności danych: Linear dla prostych, RBF dla uniwersalnych, Polynomial dla specjalnych przypadków.</p>
+<p><strong>Następna ściągawka:</strong> Logistic Regression - klasyfikacja probabilistyczna! 🎯</p>
 
 
 <!-- -->
@@ -2667,7 +2668,9 @@ C      | Train Acc | Test Acc | Difference | Support Vectors
 <span id="cb25-999"><a href="#cb25-999" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Potrzebujesz bardzo szybkiego inference (użyj Decision Tree)</span>
 <span id="cb25-1000"><a href="#cb25-1000" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb25-1001"><a href="#cb25-1001" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-1002"><a href="#cb25-1002" aria-hidden="true" tabindex="-1"></a>**Podsumowanie:** SVM to potężny algoritm do klasyfikacji z optymalną separacją klas. Wybierz kernel w zależności od złożoności danych: Linear dla prostych, RBF dla uniwersalnych, Polynomial dla specjalnych przypadków. 🎯</span>
+<span id="cb25-1002"><a href="#cb25-1002" aria-hidden="true" tabindex="-1"></a>**Podsumowanie:** SVM to potężny algoritm do klasyfikacji z optymalną separacją klas. Wybierz kernel w zależności od złożoności danych: Linear dla prostych, RBF dla uniwersalnych, Polynomial dla specjalnych przypadków.</span>
+<span id="cb25-1003"><a href="#cb25-1003" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-1004"><a href="#cb25-1004" aria-hidden="true" tabindex="-1"></a>**Następna ściągawka:** Logistic Regression - klasyfikacja probabilistyczna! 🎯</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

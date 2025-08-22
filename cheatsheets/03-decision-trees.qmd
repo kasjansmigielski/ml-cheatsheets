@@ -646,4 +646,4 @@ print("Rozwiązanie: Random Forest (następna ściągawka!)")
 - Przewidujesz wartości ciągłe (lepiej Linear Regression)
 :::
 
-**Następna ściągawka:** Random Forest - zespół drzew (wkrótce)! 🌲🌲🌲
+**Następna ściągawka:** [Random Forest - zespół drzew](04-random-forest.qmd)! 🌲🌲🌲

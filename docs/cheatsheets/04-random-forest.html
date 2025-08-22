@@ -244,7 +244,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="praktyczny-przykład-przewidywanie-sukcesu-produktu" class="level2">
 <h2 class="anchored" data-anchor-id="praktyczny-przykład-przewidywanie-sukcesu-produktu">🎯 Praktyczny przykład: przewidywanie sukcesu produktu</h2>
 <p>Czy nowy produkt odniesie sukces na rynku?</p>
-<div id="6da9f68f" class="cell" data-execution_count="1">
+<div id="6e2b1d1b" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
@@ -332,7 +332,7 @@ Pokaż statystyki produktów
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="c26feced" class="cell" data-execution_count="2">
+<div id="c99cc829" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>Statystyki produktów:
                cena       jakosc  marketing_budget  konkurencja  \
@@ -367,7 +367,7 @@ Odsetek udanych produktów: 99.2%</code></pre>
 <h2 class="anchored" data-anchor-id="budowanie-modelu-krok-po-kroku">🔧 Budowanie modelu krok po kroku</h2>
 <section id="przygotowanie-danych" class="level3">
 <h3 class="anchored" data-anchor-id="przygotowanie-danych">1) Przygotowanie danych</h3>
-<div id="eac3810a" class="cell" data-execution_count="3">
+<div id="9ea7be7e" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Encoding kategorycznych zmiennych</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> LabelEncoder</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -403,7 +403,7 @@ Pokaż podział danych
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="170db722" class="cell" data-execution_count="4">
+<div id="1c75e19f" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
 <pre><code>Dane treningowe: 1600 produktów
 Dane testowe: 400 produktów</code></pre>
@@ -415,7 +415,7 @@ Dane testowe: 400 produktów</code></pre>
 </section>
 <section id="trenowanie-random-forest" class="level3">
 <h3 class="anchored" data-anchor-id="trenowanie-random-forest">2) Trenowanie Random Forest</h3>
-<div id="1578cf9d" class="cell" data-execution_count="5">
+<div id="06798f5a" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tworzenie modelu Random Forest</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>rf_model <span class="op">=</span> RandomForestClassifier(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    n_estimators<span class="op">=</span><span class="dv">100</span>,       <span class="co"># liczba drzew w lesie</span></span>
@@ -445,7 +445,7 @@ Pokaż parametry wytrenowanego modelu
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="a114b2f2" class="cell" data-execution_count="6">
+<div id="af33619f" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-stdout">
 <pre><code>Random Forest wytrenowany!
 Liczba drzew: 100
@@ -458,7 +458,7 @@ Liczba drzew: 100
 </section>
 <section id="ewaluacja-modelu" class="level3">
 <h3 class="anchored" data-anchor-id="ewaluacja-modelu">3) Ewaluacja modelu</h3>
-<div id="bb74e445" class="cell" data-execution_count="7">
+<div id="dea7a50a" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predykcje</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> rf_model.predict(X_test)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>y_pred_proba <span class="op">=</span> rf_model.predict_proba(X_test)[:, <span class="dv">1</span>]</span>
@@ -490,7 +490,7 @@ Pokaż wyniki Random Forest
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="e47d2f59" class="cell" data-execution_count="8">
+<div id="dd0a5a0d" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Dokładność Random Forest: 99.8%
@@ -509,7 +509,7 @@ Rzeczywiste Sukces:    0     399</code></pre>
 </section>
 <section id="analiza-ważności-cech-feature-importance" class="level2">
 <h2 class="anchored" data-anchor-id="analiza-ważności-cech-feature-importance">📊 Analiza ważności cech (Feature Importance)</h2>
-<div id="8bc887b3" class="cell" data-execution_count="9">
+<div id="d6fedd95" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
@@ -635,7 +635,7 @@ Pokaż wyniki i wykres ważności cech
 </div>
 <div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="0f8f6f53" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="10">
+<div id="7b28af4d" class="cell" data-fig-height="6" data-fig-width="10" data-execution_count="10">
 <div class="cell-output cell-output-stdout">
 <pre><code>Wyniki Random Forest:
 Dokładność modelu: 99.8%
@@ -673,7 +673,7 @@ marka_znana: 0.028</code></pre>
 </section>
 <section id="random-forest-vs-decision-tree---porównanie" class="level2">
 <h2 class="anchored" data-anchor-id="random-forest-vs-decision-tree---porównanie">🔍 Random Forest vs Decision Tree - porównanie</h2>
-<div id="8d099b0b" class="cell" data-execution_count="11">
+<div id="6d0d087d" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeClassifier</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Porównanie z pojedynczym Decision Tree</span></span>
@@ -720,7 +720,7 @@ Pokaż porównanie modeli
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="9978f77e" class="cell" data-execution_count="12">
+<div id="452617e9" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-stdout">
 <pre><code>PORÓWNANIE MODELI:
 Decision Tree:    98.5%
@@ -742,7 +742,7 @@ Random Forest jest znacznie bardziej stabilny!</code></pre>
 <h2 class="anchored" data-anchor-id="zastosowania-random-forest">🎯 Zastosowania Random Forest</h2>
 <section id="e-commerce---rekomendacje-produktów" class="level3">
 <h3 class="anchored" data-anchor-id="e-commerce---rekomendacje-produktów">1) <strong>E-commerce - rekomendacje produktów</strong></h3>
-<div id="910ce40a" class="cell" data-execution_count="13">
+<div id="d150b61b" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Przewidywanie czy użytkownik kupi produkt</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ecommerce_features <span class="op">=</span> [<span class="st">'historia_zakupów'</span>, <span class="st">'czas_na_stronie'</span>, <span class="st">'kategoria_preferowana'</span>, </span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                     <span class="st">'cena_produktu'</span>, <span class="st">'oceny_produktu'</span>, <span class="st">'sezon'</span>]</span>
@@ -754,7 +754,7 @@ Random Forest jest znacznie bardziej stabilny!</code></pre>
 </section>
 <section id="finanse---wykrywanie-fraudów" class="level3">
 <h3 class="anchored" data-anchor-id="finanse---wykrywanie-fraudów">2) <strong>Finanse - wykrywanie fraudów</strong></h3>
-<div id="7dc6bf0c" class="cell" data-execution_count="14">
+<div id="f9be4fe5" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identyfikacja podejrzanych transakcji</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>fraud_features <span class="op">=</span> [<span class="st">'kwota'</span>, <span class="st">'godzina'</span>, <span class="st">'lokalizacja'</span>, <span class="st">'typ_karty'</span>, </span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'historia_klienta'</span>, <span class="st">'częstotliwość_transakcji'</span>]</span>
@@ -766,7 +766,7 @@ Random Forest jest znacznie bardziej stabilny!</code></pre>
 </section>
 <section id="hr---przewidywanie-odejść-pracowników" class="level3">
 <h3 class="anchored" data-anchor-id="hr---przewidywanie-odejść-pracowników">3) <strong>HR - przewidywanie odejść pracowników</strong></h3>
-<div id="a237b079" class="cell" data-execution_count="15">
+<div id="9fafd7ca" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Employee churn prediction</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>hr_features <span class="op">=</span> [<span class="st">'satisfaction'</span>, <span class="st">'last_evaluation'</span>, <span class="st">'projects'</span>, <span class="st">'salary'</span>, </span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">'time_company'</span>, <span class="st">'work_accident'</span>, <span class="st">'promotion'</span>]</span>
@@ -780,7 +780,7 @@ Random Forest jest znacznie bardziej stabilny!</code></pre>
 </section>
 <section id="tuning-parametrów-random-forest" class="level2">
 <h2 class="anchored" data-anchor-id="tuning-parametrów-random-forest">⚙️ Tuning parametrów Random Forest</h2>
-<div id="746900d5" class="cell" data-execution_count="16">
+<div id="3c7cac07" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Najważniejsze parametry do tuningu</span></span>
@@ -826,7 +826,7 @@ Pokaż najlepsze parametry
 </div>
 <div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="64176496" class="cell" data-execution_count="17">
+<div id="7c8bb1e3" class="cell" data-execution_count="17">
 <div class="cell-output cell-output-stdout">
 <pre><code>Najlepsze parametry:
 {'max_depth': 5, 'max_features': 'sqrt', 'min_samples_leaf': 5, 'min_samples_split': 10, 'n_estimators': 50}
@@ -843,7 +843,7 @@ Dokładność na test set: 99.8%</code></pre>
 <h2 class="anchored" data-anchor-id="pułapki-i-rozwiązania">⚠️ Pułapki i rozwiązania</h2>
 <section id="overfitting-mimo-ensemble" class="level3">
 <h3 class="anchored" data-anchor-id="overfitting-mimo-ensemble">1) <strong>Overfitting mimo ensemble</strong></h3>
-<div id="27528144" class="cell" data-execution_count="18">
+<div id="d0361db2" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem: za głębokie drzewa mogą nadal prowadzić do overfittingu</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>overfitted_rf <span class="op">=</span> RandomForestClassifier(</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    n_estimators<span class="op">=</span><span class="dv">100</span>,</span>
@@ -888,7 +888,7 @@ Pokaż wyniki overfittingu
 </div>
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="313e812d" class="cell" data-execution_count="19">
+<div id="4c04fcee" class="cell" data-execution_count="19">
 <div class="cell-output cell-output-stdout">
 <pre><code>Overfitted Random Forest:
 Train accuracy: 100.0%
@@ -907,7 +907,7 @@ Różnica: -0.8% - znacznie lepiej!</code></pre>
 </section>
 <section id="niezbalansowane-klasy" class="level3">
 <h3 class="anchored" data-anchor-id="niezbalansowane-klasy">2) <strong>Niezbalansowane klasy</strong></h3>
-<div id="37d98945" class="cell" data-execution_count="20">
+<div id="8186f9d5" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem: gdy jedna klasa jest rzadka (np. 5% fraudów, 95% normalnych transakcji)</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.utils.class_weight <span class="im">import</span> compute_class_weight</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -946,7 +946,7 @@ Pokaż rozkład klas
 </div>
 <div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="cf5e0d1f" class="cell" data-execution_count="21">
+<div id="731234ab" class="cell" data-execution_count="21">
 <div class="cell-output cell-output-stdout">
 <pre><code>Rozkład klas:
 Porażka: 16 (1.0%)
@@ -996,7 +996,7 @@ Rozwiązania zostały zaimplementowane!</code></pre>
 </ul>
 </div>
 </div>
-<p><strong>Następna ściągawka:</strong> K-Means Clustering - grupowanie bez etykiet! 🎯</p>
+<p><strong>Następna ściągawka:</strong> <a href="../cheatsheets/05-kmeans.html">K-Means Clustering - grupowanie bez etykiet</a>! 🎯</p>
 
 
 <!-- -->
@@ -2132,7 +2132,7 @@ Rozwiązania zostały zaimplementowane!</code></pre>
 <span id="cb22-718"><a href="#cb22-718" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Masz bardzo wysokowymiarowe dane (użyj SVM lub Neural Networks)</span>
 <span id="cb22-719"><a href="#cb22-719" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb22-720"><a href="#cb22-720" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-721"><a href="#cb22-721" aria-hidden="true" tabindex="-1"></a>**Następna ściągawka:** K-Means Clustering - grupowanie bez etykiet! 🎯</span>
+<span id="cb22-721"><a href="#cb22-721" aria-hidden="true" tabindex="-1"></a>**Następna ściągawka:** <span class="co">[</span><span class="ot">K-Means Clustering - grupowanie bez etykiet</span><span class="co">](05-kmeans.qmd)</span>! 🎯</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

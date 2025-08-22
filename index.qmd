@@ -40,14 +40,19 @@ Nie tylko kopiuj kod - **zrozum** co robi każda linia. Spróbuj zmienić dane w
 
 ### 🌳 Algorytmy klasyfikacji  
 - [**Decision Trees**](cheatsheets/03-decision-trees.qmd) - Proste drzewa decyzyjne
+- [**Random Forest**](cheatsheets/04-random-forest.qmd) - Las drzew decyzyjnych
+- [**Support Vector Machines**](cheatsheets/06-svm.qmd) - Optymalne granice decyzyjne
+
+### 🎯 Uczenie nienadzorowane
+- [**K-Means Clustering**](cheatsheets/05-kmeans.qmd) - Grupowanie klientów bez etykiet
 
 ::: {.callout-note}
 ## 🔥 Kolejne ściągi w przygotowaniu!
-- K-Means Clustering (segmentacja klientów)
-- Random Forest (ensembles)
 - Logistic Regression (klasyfikacja binarna)
 - Feature Engineering (przygotowanie danych)
 - Model Evaluation (metryki i walidacja)
+- Neural Networks (sieci neuronowe)
+- Ensemble Methods (metody zespołowe)
 
 Śledź aktualizacje!
 :::

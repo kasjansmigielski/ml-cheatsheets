@@ -864,4 +864,4 @@ print(f"Po PCA: Silhouette = {sil_pca:.3f}")
 - Dane mają dużo outliers (użyj DBSCAN)
 :::
 
-**Następna ściągawka:** Support Vector Machines - znajdowanie optymalnych granic! 🎯
+**Następna ściągawka:** [Support Vector Machines - znajdowanie optymalnych granic](06-svm.qmd)! 🎯

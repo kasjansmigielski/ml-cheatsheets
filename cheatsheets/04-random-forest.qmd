@@ -676,4 +676,4 @@ print("Rozwiązania zostały zaimplementowane!")
 - Masz bardzo wysokowymiarowe dane (użyj SVM lub Neural Networks)
 :::
 
-**Następna ściągawka:** K-Means Clustering - grupowanie bez etykiet! 🎯
+**Następna ściągawka:** [K-Means Clustering - grupowanie bez etykiet](05-kmeans.qmd)! 🎯

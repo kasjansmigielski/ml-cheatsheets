@@ -243,7 +243,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="praktyczny-przykład-segmentacja-klientów-sklepu" class="level2">
 <h2 class="anchored" data-anchor-id="praktyczny-przykład-segmentacja-klientów-sklepu">🛍️ Praktyczny przykład: segmentacja klientów sklepu</h2>
 <p>Jak pogrupować klientów do targetowanych kampanii marketingowych?</p>
-<div id="f384ec99" class="cell" data-execution_count="1">
+<div id="f2c0c378" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
@@ -310,7 +310,7 @@ Pokaż statystyki klientów
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="1d61ac1a" class="cell" data-execution_count="2">
+<div id="e02b37b6" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-stdout">
 <pre><code>Statystyki klientów:
               wiek  roczny_dochod  wydatki_roczne  liczba_zakupow  \
@@ -351,7 +351,7 @@ Name: count, dtype: int64</code></pre>
 <h2 class="anchored" data-anchor-id="budowanie-modelu-krok-po-kroku">🔧 Budowanie modelu krok po kroku</h2>
 <section id="przygotowanie-danych" class="level3">
 <h3 class="anchored" data-anchor-id="przygotowanie-danych">1) Przygotowanie danych</h3>
-<div id="3f99054e" class="cell" data-execution_count="3">
+<div id="8ea857a1" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Wybierz features do clusteringu (bez typ_klienta - to chcemy odkryć!)</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> [<span class="st">'wiek'</span>, <span class="st">'roczny_dochod'</span>, <span class="st">'wydatki_roczne'</span>, <span class="st">'liczba_zakupow'</span>, </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">'sredni_koszt_zakupu'</span>, <span class="st">'lata_jako_klient'</span>]</span>
@@ -382,7 +382,7 @@ Pokaż wyniki standaryzacji
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="d6ab438d" class="cell" data-execution_count="4">
+<div id="6e8dd519" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
 <pre><code>Przed standaryzacją:
               wiek  roczny_dochod  wydatki_roczne  liczba_zakupow  \
@@ -442,7 +442,7 @@ dtype: float64</code></pre>
 </section>
 <section id="znajdowanie-optymalnej-liczby-klastrów" class="level3">
 <h3 class="anchored" data-anchor-id="znajdowanie-optymalnej-liczby-klastrów">2) Znajdowanie optymalnej liczby klastrów</h3>
-<div id="74efb10f" class="cell" data-execution_count="5">
+<div id="77e8f753" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Metoda łokcia (Elbow Method)</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>inertias <span class="op">=</span> []</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>silhouette_scores <span class="op">=</span> []</span>
@@ -474,7 +474,7 @@ Pokaż optymalne K
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="e584fe25" class="cell" data-execution_count="6">
+<div id="a3a897f9" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-stdout">
 <pre><code>Optymalna liczba klastrów (Silhouette): 2
 
@@ -496,7 +496,7 @@ K=10: Inertia=2286, Silhouette=0.176</code></pre>
 </section>
 <section id="trenowanie-finalnego-modelu" class="level3">
 <h3 class="anchored" data-anchor-id="trenowanie-finalnego-modelu">3) Trenowanie finalnego modelu</h3>
-<div id="4527ec01" class="cell" data-execution_count="7">
+<div id="08736e39" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Trenuj model z optymalnym K</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>final_kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>best_k, random_state<span class="op">=</span><span class="dv">42</span>, n_init<span class="op">=</span><span class="dv">10</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>cluster_labels <span class="op">=</span> final_kmeans.fit_predict(X_scaled)</span>
@@ -525,7 +525,7 @@ Pokaż wyniki finalnego modelu
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="53fb7b7f" class="cell" data-execution_count="8">
+<div id="ed41b390" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-stdout">
 <pre><code>Model K-Means wytrenowany z K=2
 Silhouette Score: 0.281
@@ -543,7 +543,7 @@ Klaster 1: 725 klientów (72.5%)</code></pre>
 </section>
 <section id="analiza-i-interpretacja-klastrów" class="level2">
 <h2 class="anchored" data-anchor-id="analiza-i-interpretacja-klastrów">📊 Analiza i interpretacja klastrów</h2>
-<div id="aadee708" class="cell" data-execution_count="9">
+<div id="926b4b2d" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
@@ -748,7 +748,7 @@ Pokaż analizę klastrów i wizualizacje
 </div>
 <div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="5fd950d8" class="cell" data-fig-height="8" data-fig-width="12" data-execution_count="10">
+<div id="9855daf2" class="cell" data-fig-height="8" data-fig-width="12" data-execution_count="10">
 <div class="cell-output cell-output-stdout">
 <pre><code>CHARAKTERYSTYKI KLASTRÓW:
 ==================================================
@@ -796,7 +796,7 @@ klaster
 <h2 class="anchored" data-anchor-id="praktyczne-zastosowania-k-means">🎯 Praktyczne zastosowania K-Means</h2>
 <section id="marketing---personalizacja-kampanii" class="level3">
 <h3 class="anchored" data-anchor-id="marketing---personalizacja-kampanii">1) <strong>Marketing - personalizacja kampanii</strong></h3>
-<div id="b2e5c25c" class="cell" data-execution_count="11">
+<div id="8f41f3a2" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Strategia marketingowa na podstawie klastrów</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> marketing_strategy(cluster_id, cluster_data):</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    avg_income <span class="op">=</span> cluster_data[<span class="st">'roczny_dochod'</span>].mean()</span>
@@ -856,7 +856,7 @@ Pokaż strategię marketingową
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="d185501d" class="cell" data-execution_count="12">
+<div id="554a01de" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-stdout">
 <pre><code>STRATEGIA MARKETINGOWA DLA KAŻDEGO KLASTRA:
 ============================================================
@@ -878,7 +878,7 @@ Kanały: Email marketing, social media, display ads</code></pre>
 </section>
 <section id="inne-branże" class="level3">
 <h3 class="anchored" data-anchor-id="inne-branże">2) <strong>Inne branże</strong></h3>
-<div id="13d34618" class="cell" data-execution_count="13">
+<div id="8e13787f" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Healthcare - grupowanie pacjentów</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>healthcare_features <span class="op">=</span> [<span class="st">'wiek'</span>, <span class="st">'BMI'</span>, <span class="st">'ciśnienie'</span>, <span class="st">'cholesterol'</span>, <span class="st">'aktywność_fizyczna'</span>]</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Wynik: programy profilaktyczne dostosowane do grup ryzyka</span></span>
@@ -896,7 +896,7 @@ Kanały: Email marketing, social media, display ads</code></pre>
 </section>
 <section id="tuning-parametrów-k-means" class="level2">
 <h2 class="anchored" data-anchor-id="tuning-parametrów-k-means">⚙️ Tuning parametrów K-Means</h2>
-<div id="ed94c82f" class="cell" data-execution_count="14">
+<div id="ac0fbfaa" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Różne metody inicjalizacji</span></span>
@@ -949,14 +949,14 @@ Pokaż wyniki tuningu
 </div>
 <div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="8b57bc89" class="cell" data-execution_count="15">
+<div id="9835ca93" class="cell" data-execution_count="15">
 <div class="cell-output cell-output-stdout">
 <pre><code>Porównanie metod inicjalizacji:
 k-means++: Silhouette = 0.281
 random: Silhouette = 0.281
 n_init=1: Silhouette=0.280, Czas=0.00s
-n_init=5: Silhouette=0.281, Czas=0.00s
-n_init=10: Silhouette=0.281, Czas=0.01s
+n_init=5: Silhouette=0.281, Czas=0.01s
+n_init=10: Silhouette=0.281, Czas=0.02s
 n_init=20: Silhouette=0.281, Czas=0.03s</code></pre>
 </div>
 </div>
@@ -969,7 +969,7 @@ n_init=20: Silhouette=0.281, Czas=0.03s</code></pre>
 <h2 class="anchored" data-anchor-id="pułapki-i-rozwiązania">⚠️ Pułapki i rozwiązania</h2>
 <section id="brak-standaryzacji-danych" class="level3">
 <h3 class="anchored" data-anchor-id="brak-standaryzacji-danych">1) <strong>Brak standaryzacji danych</strong></h3>
-<div id="87d78fd5" class="cell" data-execution_count="16">
+<div id="976dfaf9" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem: różne skale zmiennych</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"PROBLEM: Bez standaryzacji"</span>)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dochód (tysiące): 20-80"</span>)  </span>
@@ -1004,7 +1004,7 @@ Pokaż problem standaryzacji
 </div>
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="a91ca490" class="cell" data-execution_count="17">
+<div id="7bc3c114" class="cell" data-execution_count="17">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Wyniki:
@@ -1019,7 +1019,7 @@ Ze standaryzacją: Silhouette = 0.406
 </section>
 <section id="outliers---wartości-odstające" class="level3">
 <h3 class="anchored" data-anchor-id="outliers---wartości-odstające">2) <strong>Outliers - wartości odstające</strong></h3>
-<div id="afa5448f" class="cell" data-execution_count="18">
+<div id="0db0b1a5" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem: outliers zakłócają centroidy klastrów</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> RobustScaler</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1058,7 +1058,7 @@ Pokaż wpływ outliers
 </div>
 <div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="7be8f44f" class="cell" data-execution_count="19">
+<div id="cf6ac643" class="cell" data-execution_count="19">
 <div class="cell-output cell-output-stdout">
 <pre><code>Wpływ outliers:
 StandardScaler: Silhouette = 0.193
@@ -1073,7 +1073,7 @@ RobustScaler: Silhouette = 0.246
 </section>
 <section id="curse-of-dimensionality" class="level3">
 <h3 class="anchored" data-anchor-id="curse-of-dimensionality">3) <strong>Curse of dimensionality</strong></h3>
-<div id="4495b44e" class="cell" data-execution_count="20">
+<div id="7dfe6a6c" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem: za dużo wymiarów</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1119,7 +1119,7 @@ Pokaż problem wymiarowości
 </div>
 <div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="27298a09" class="cell" data-execution_count="21">
+<div id="17130a7a" class="cell" data-execution_count="21">
 <div class="cell-output cell-output-stdout">
 <pre><code>Problem wielu wymiarów:
 2 wymiarów: Silhouette = 0.406
@@ -1177,7 +1177,7 @@ Po PCA: Silhouette = 0.233</code></pre>
 </ul>
 </div>
 </div>
-<p><strong>Następna ściągawka:</strong> Support Vector Machines - znajdowanie optymalnych granic! 🎯</p>
+<p><strong>Następna ściągawka:</strong> <a href="../cheatsheets/06-svm.html">Support Vector Machines - znajdowanie optymalnych granic</a>! 🎯</p>
 
 
 <!-- -->
@@ -2501,7 +2501,7 @@ Po PCA: Silhouette = 0.233</code></pre>
 <span id="cb22-906"><a href="#cb22-906" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Dane mają dużo outliers (użyj DBSCAN)</span>
 <span id="cb22-907"><a href="#cb22-907" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb22-908"><a href="#cb22-908" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-909"><a href="#cb22-909" aria-hidden="true" tabindex="-1"></a>**Następna ściągawka:** Support Vector Machines - znajdowanie optymalnych granic! 🎯</span>
+<span id="cb22-909"><a href="#cb22-909" aria-hidden="true" tabindex="-1"></a>**Następna ściągawka:** <span class="co">[</span><span class="ot">Support Vector Machines - znajdowanie optymalnych granic</span><span class="co">](06-svm.qmd)</span>! 🎯</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

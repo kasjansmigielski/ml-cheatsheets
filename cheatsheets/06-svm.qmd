@@ -951,4 +951,6 @@ print("💡 Zbyt wysokie C: perfect train accuracy, słabe test accuracy")
 - Potrzebujesz bardzo szybkiego inference (użyj Decision Tree)
 :::
 
-**Podsumowanie:** SVM to potężny algoritm do klasyfikacji z optymalną separacją klas. Wybierz kernel w zależności od złożoności danych: Linear dla prostych, RBF dla uniwersalnych, Polynomial dla specjalnych przypadków. 🎯
+**Podsumowanie:** SVM to potężny algoritm do klasyfikacji z optymalną separacją klas. Wybierz kernel w zależności od złożoności danych: Linear dla prostych, RBF dla uniwersalnych, Polynomial dla specjalnych przypadków.
+
+**Następna ściągawka:** Logistic Regression - klasyfikacja probabilistyczna! 🎯
